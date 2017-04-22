@@ -22,9 +22,11 @@ export const getIdentities = async () => {
   // })
 }
 
-export const addIdentity = async (name) => {
+export const addIdentity = async (name, location) => {
   let healthChainRx = await HealthChainRx.deployed()
 
-  let success = healthChainRx.addIdentity(name)
+  let success = await healthChainRx.addIdentity(name, location, {from: web3.eth.coinbase})
   console.log(`success ${success}`)
+  let theName = await healthChainRx.getIdentity.call(web3.eth.coinbase)
+  console.log(theName)
 }

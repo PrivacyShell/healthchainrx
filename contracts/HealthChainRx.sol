@@ -3,28 +3,67 @@ pragma solidity ^0.4.8;
 contract HealthChainRx {
 
   address public owner;
+  uint temp = 1;
 
   struct Identity {
       string name;
+      string location;
+  }
+
+  struct Prescription {
+      address doctor;
+      uint dateIssued;
+      uint expiresInDays;
+      string status;
   }
 
   mapping (address => Identity) public identities;
-  // identities["0xce1ff367bdf1eb16f6ee9f243ff0a55bb71a16ac"] = Identity({name: "joe"});
+  mapping (bytes32 => Prescription) public prescriptions;
+
 
   function HealthChainRx() {
     owner = msg.sender;
   }
 
-  function addIdentity(string name) returns (bool success){
-    identities[msg.sender] = Identity({name: name});
+  function addIdentity(string name, string location) returns (bool success) {
+    // Validate the sender, only the owner can add identities
+    if(msg.sender != owner) throw;
+    /*temp = temp + 1;*/
+    identities[msg.sender] = Identity({
+        name: name,
+        location: location
+    });
     return true;
   }
 
-  /*function getIdentities() returns (Identity[] memory foo) {
-    foo = new address[](1);
-    foo[0] = owner;
-    return foo;
-  }*/
+  function getIdentity(address id) constant returns (string name) {
+    return identities[id].name;
+  }
+
+  function addPrescription(address doctor, uint dateIssued, uint expiresInDays, bytes32 hash) returns (bool success) {
+    // TODO: Make sure that the sender in in the identites table, lookup that info to be used
+
+    prescriptions[hash] = Prescription({
+        doctor: doctor,
+        dateIssued: dateIssued,
+        expiresInDays: expiresInDays,
+        status: "new"
+    });
+    return true;
+  }
+
+  function getPrescriptionStatus() constant returns (string) {
+      // TODO: Lookup status of prescription possible returns are 'new', 'filled', 'expired'
+
+        return "status";
+  }
+
+  function dispensePrescription() constant returns (string) {
+      // TODO: Call getPrescritionStatus() then update record as needed to
+
+       return "status";
+  }
+
 
   function prescriptions() {
 

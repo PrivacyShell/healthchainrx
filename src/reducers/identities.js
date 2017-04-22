@@ -4,7 +4,6 @@ export const ADD_IDENTITY = 'ADD_IDENTITY'
 const identity = (state, action) => {
   switch (action.type) {
     case RECIEVE_IDENTITIES:
-      debugger
       return {
         name: action.identities
       }
