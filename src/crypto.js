@@ -27,6 +27,7 @@ function hex(buffer) {
 }
 
 // call this function with the input as the string + nonce, along with a callback function
+// returns a 64 byte string truncated to 32 bytes
 function sha256_wrapper(input, cb){
   sha256(input).then(function(digest) {
     cb(digest);
