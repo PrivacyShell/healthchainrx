@@ -39,7 +39,7 @@ class DoctorContainer extends React.Component {
               <div className="panel-heading">
                 <h3>Doctor</h3>
                 <div className="form-group">
-                  <label for="doctor-input">Doctor</label>
+                  <label htmlFor="doctor-input">Doctor</label>
                 <AddressDropdown id="doctor-input"
                   accounts={accounts} />
                 </div>
@@ -51,7 +51,7 @@ class DoctorContainer extends React.Component {
 
                   <form>
                     <div className="form-group">
-                      <label for="patient-name-input">Name</label>
+                      <label htmlFor="patient-name-input">Name</label>
                       <input type="text"
                              ref={(c) => {this.nameInput = c;}}
                              className="form-control"
@@ -59,7 +59,7 @@ class DoctorContainer extends React.Component {
                              placeholder="Name"/>
                     </div>
                     <div className="form-group">
-                      <label for="patient-dob-input">Date of Birth</label>
+                      <label htmlFor="patient-dob-input">Date of Birth</label>
                       <input type="text"
                              ref={(c) => {this.dobInput = c;}}
                              className="form-control"
@@ -67,7 +67,7 @@ class DoctorContainer extends React.Component {
                              placeholder="Date of Birth"/>
                     </div>
                     <div className="form-group">
-                      <label for="patient-healthcard-input">Health Card #</label>
+                      <label htmlFor="patient-healthcard-input">Health Card #</label>
                       <input type="text"
                              ref={(c) => {this.healthCardInput = c;}}
                              className="form-control"
@@ -75,7 +75,7 @@ class DoctorContainer extends React.Component {
                              placeholder="HealthCard #"/>
                     </div>
                     <div className="form-group">
-                      <label for="patient-prescription-input">Prescription</label>
+                      <label htmlFor="patient-prescription-input">Prescription</label>
                       <input type="text"
                              ref={(c) => {this.prescriptionInput = c;}}
                              className="form-control"
@@ -83,7 +83,7 @@ class DoctorContainer extends React.Component {
                              placeholder="Prescription"/>
                     </div>
                     <div className="form-group">
-                      <label for="patient-prescription-instructions-input">Instructions</label>
+                      <label htmlFor="patient-prescription-instructions-input">Instructions</label>
                       <textarea type="text"
                              ref={(c) => {this.instructionsInput = c;}}
                              className="form-control"

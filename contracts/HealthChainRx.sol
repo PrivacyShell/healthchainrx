@@ -3,9 +3,7 @@ pragma solidity ^0.4.8;
 contract HealthChainRx {
   uint BLOCKS_PER_DAY = 5760;
 
-
   address public owner;
-  uint temp = 1;
 
   struct Identity {
       string name;
@@ -16,12 +14,12 @@ contract HealthChainRx {
       address doctor;
       uint dateIssued;
       uint expiresInDays;
-      string status;
+      uint dateDispensed;
+      address dispensingPharmacy;
   }
 
   mapping (address => Identity) public identities;
   mapping (bytes32 => Prescription) public prescriptions;
-
 
   function HealthChainRx() {
     owner = msg.sender;
@@ -30,7 +28,7 @@ contract HealthChainRx {
   function addIdentity(string name, string location) returns (bool success) {
     // Validate the sender, only the owner can add identities
     if(msg.sender != owner) throw;
-    /*temp = temp + 1;*/
+
     identities[msg.sender] = Identity({
         name: name,
         location: location
@@ -50,12 +48,15 @@ contract HealthChainRx {
         doctor: doctor,
         dateIssued: block.number,
         expiresInDays: expiresInDays,
-        status: "new"
+        dateDispensed: 0,
+        dispensingPharmacy: 0x0
     });
     return true;
   }
 
   function isPrescriptionExpired(bytes32 hash) returns(bool isExpired){
+    if(prescriptions[hash].expiresInDays == 0) return false;
+
     uint currentBlock = block.number;
     uint blockIssued = prescriptions[hash].dateIssued;
     uint expiredInDays = prescriptions[hash].expiresInDays;
@@ -64,20 +65,37 @@ contract HealthChainRx {
     return (blocksSinceIssue > maxBlocks);
   }
 
-  function getPrescriptionStatus() constant returns (string) {
-      // TODO: Lookup status of prescription possible returns are 'new', 'filled', 'expired'
+  function getPrescriptionStatus(bytes32 hash) constant returns (string status) {
 
-        return "status";
+      // Does it exist
+      if(prescriptions[hash].doctor == 0x0) {
+        return "Does not exist";
+      }
+
+      // Is it expired
+      if(isPrescriptionExpired(hash)) {
+        return "It is expired";
+      }
+
+      // Has it been filled
+      if(prescriptions[hash].dateDispensed != 0) {
+        return "It has been dispensed";
+      }
+
+      // TODO Insurance company declined
+
+      return "Good";
+
+
   }
 
-  function dispensePrescription() constant returns (string) {
-      // TODO: Call getPrescritionStatus() then update record as needed to
+  function dispensePrescription(bytes32 hash) returns (bool success) {
+      // Check prescription status
+      if (sha3(getPrescriptionStatus(hash)) != sha3("Good")) {
+        return false;
+      }
 
-       return "status";
+      return true;
   }
 
-
-  function prescriptions() {
-
-  }
 }

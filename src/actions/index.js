@@ -7,8 +7,8 @@ import { SELECT_CRYPTO, SELECT_FROM_ADDRESS, SELECT_TO_ADDRESS, ENTER_AMOUNT } f
 import { SHOW_TRANSACTIONS, ADD_TRANSACTION } from '../reducers/transactions'
 import { RECIEVE_IDENTITIES } from '../reducers/identities'
 import { SHOW_PRESCRIPTION_QR } from '../reducers/prescription'
-
-import { addPrescription } from '../middleware/HealthChainRx'
+import { SHOW_SUCCESS, SHOW_ERROR } from '../reducers/dispenser'
+import { addPrescription, verifyPrescription } from '../middleware/HealthChainRx'
 
 import Web3 from 'web3'
 
@@ -39,6 +39,28 @@ export const addPrescriptionDispatcher = (dateIssued, expiresInDays, hash) => (d
   } else {
     console.log(`error adding prescription`)
   }
+}
+
+const showSuccess = status => ({
+  type: SHOW_SUCCESS,
+  status
+})
+
+const showError = status => ({
+  type: SHOW_ERROR,
+  status
+})
+
+export const verifyPrescriptionDispatcher = (hash) => (dispatch, getState) => {
+//  debugger
+  let status = verifyPrescription(hash)
+
+  if (status === "Good") {
+    dispatch(showSuccess(status))
+  } else {
+    dispatch(showError(status))
+  }
+
 }
 
 const receiveAccounts = accounts => ({
