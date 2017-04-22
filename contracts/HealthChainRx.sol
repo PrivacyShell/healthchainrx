@@ -40,8 +40,9 @@ contract HealthChainRx {
     return identities[id].name;
   }
 
-  function addPrescription(address doctor, uint dateIssued, uint expiresInDays, bytes32 hash) returns (bool success) {
+  function addPrescription(uint256 dateIssued, uint expiresInDays, bytes32 hash) returns (bool success) {
     // TODO: Make sure that the sender in in the identites table, lookup that info to be used
+    address doctor = msg.sender;
 
     prescriptions[hash] = Prescription({
         doctor: doctor,

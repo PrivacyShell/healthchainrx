@@ -6,6 +6,9 @@ import { RECEIVE_CRYPTOS } from '../reducers/cryptos'
 import { SELECT_CRYPTO, SELECT_FROM_ADDRESS, SELECT_TO_ADDRESS, ENTER_AMOUNT } from '../reducers/transfer'
 import { SHOW_TRANSACTIONS, ADD_TRANSACTION } from '../reducers/transactions'
 import { RECIEVE_IDENTITIES } from '../reducers/identities'
+import { SHOW_PRESCRIPTION_QR } from '../reducers/prescription'
+
+import { addPrescription } from '../middleware/HealthChainRx'
 
 import Web3 from 'web3'
 
@@ -20,9 +23,22 @@ export const getAllIdentities = () => (dispatch, getState) => {
   //debugger
   let identities = getIdentities().then(ids => {
     dispatch(recieveIdentities(ids))
-
   })
 
+}
+
+const showPrescriptionQR = prescription => ({
+  type: SHOW_PRESCRIPTION_QR,
+  prescription
+})
+
+export const addPrescriptionDispatcher = (dateIssued, expiresInDays, hash) => (dispatch, getState) => {
+  let success = addPrescription(dateIssued, expiresInDays, hash)
+  if (success) {
+    dispatch(showPrescriptionQR({dateIssued, expiresInDays, hash}))
+  } else {
+    console.log(`error adding prescription`)
+  }
 }
 
 const receiveAccounts = accounts => ({
