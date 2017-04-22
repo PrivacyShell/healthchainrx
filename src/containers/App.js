@@ -1,7 +1,9 @@
 import React from 'react'
 import NavBar from '../components/nav/NavBar'
 
-const navdata = [{"title": "Home", "href": "/"}, {"title": "YAEE", "href": "/yaee"}]
+const navdata = [{"title": "Home", "href": "/"},
+  {"title": "Doctor", "href": "/doctor"},
+  {"title": "Pharmacy", "href": "/pharma"}]
 
 class App extends React.Component {
 

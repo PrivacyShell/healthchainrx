@@ -11,7 +11,8 @@ import { getAllAccounts } from './actions'
 import { getCryptos } from './actions'
 import { fetchTransactions } from './actions'
 import App from './containers/App'
-import YAEEContainer from './containers/YAEEContainer'
+import DoctorContainer from './containers/DoctorContainer'
+import PharmaContainer from './containers/PharmaContainer'
 
 const middleware = [ thunk ];
 if (process.env.NODE_ENV !== 'production') {
@@ -30,7 +31,8 @@ render(
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path="/" component={App}>
-        <Route path="yaee" component={YAEEContainer} />
+        <Route path="doctor" component={DoctorContainer} />
+        <Route path="pharma" component={PharmaContainer} />
       </Route>
     </Router>
   </Provider>,
