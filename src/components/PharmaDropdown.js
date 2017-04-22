@@ -1,6 +1,6 @@
 import React from 'react'
 
-const AddressDropdown = ({ label, accounts, action, type }) => (
+const AddressDropdown = ({ label, accounts, action }) => (
   <div className="form-group form-group-sm">
     <label className="col-sm-2 control-label">{label}</label>
     <div className="col-sm-10">

@@ -13,12 +13,12 @@ var identityDetails = [
   {"name": "Shoppers 24", "location": "1 King St. W"},
   {"name": "Shoppers 25", "location": "1 King St. W" },
   {"name": "Shoppers 26", "location": "1 King St. W" },
-  {"name": "Shoppers 27", "location": "1 King St. W" },
-  {"name": "Shoppers 27", "location": "1 King St. W" },
-  {"name": "Shoppers 28", "location": "1 King St. W" },
-  {"name": "Shoppers 29", "location": "1 King St. W" },
-  {"name": "Shoppers 30", "location": "1 King St. W" },
-  {"name": "Shoppers 31", "location": "1 King St. W" }
+  {"name": "Dr. James", "location": "1 King St. W" },
+  {"name": "Dr. Bethell", "location": "1 King St. W" },
+  {"name": "Dr. Malik Pula 28", "location": "1 King St. W" },
+  {"name": "Dr. Paul McHardy", "location": "1 King St. W" },
+  {"name": "Dr. Richard Winston", "location": "1 King St. W" },
+  {"name": "Dr. Maria Mark", "location": "1 King St. W" }
 ]
 
 export default {

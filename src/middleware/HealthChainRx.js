@@ -30,3 +30,10 @@ export const addIdentity = async (name, location) => {
   let theName = await healthChainRx.getIdentity.call(web3.eth.coinbase)
   console.log(theName)
 }
+
+export const addPrescription = async (dateIssued, expiresInDays, hash) => {
+  let healthChainRx = await HealthChainRx.deployed()
+
+  let success = await healthChainRx.addPrescription(dateIssued, expiresInDays, hash, {from: web3.eth.coinbase, gas: 500000})
+  return success
+}

@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getAllAccounts } from '../reducers/accounts'
 import AddressDropdown from '../components/AddressDropdown'
-import { selectFromAddress,  getAllIdentities} from '../actions'
+import { selectFromAddress,  getAllIdentities, addPrescriptionDispatcher } from '../actions'
 import sha256_wrapper from '../crypto';
 var pd = require('probability-distributions');
 
@@ -38,6 +38,11 @@ class DoctorContainer extends React.Component {
             <div className="panel panel-primary">
               <div className="panel-heading">
                 <h3>Doctor</h3>
+                <div className="form-group">
+                  <label for="doctor-input">Doctor</label>
+                <AddressDropdown id="doctor-input"
+                  accounts={accounts} />
+                </div>
               </div>
             </div>
             <div className="panel-body">
@@ -136,9 +141,12 @@ class DoctorContainer extends React.Component {
 
     let encoded = JSON.stringify(formValues);
     encoded += pd.prng(32);
-    
+
     sha256_wrapper(encoded, (hash) => {
       console.log('sha256 hash: ', hash);
+      let dateIssued = new Date().getTime()
+      let expiresInDays = 20
+      this.props.addPrescriptionDispatcher(dateIssued, expiresInDays, hash)
     })
 
 
@@ -178,5 +186,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getAllIdentities }
+  { getAllIdentities, addPrescriptionDispatcher }
 )(DoctorContainer)
