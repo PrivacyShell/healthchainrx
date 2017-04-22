@@ -1,3 +1,15 @@
+# HOW TO
+
+SCRIPT FOR ADDING FUNCTION TO SOLIDITY AND CONNECTING:
+
+- Update the contract.sol to add the function
+- run `truffle compile`
+- run `truffle migrate`
+- Go to `middleware/` and find corresponding javascript
+	- Add corresponding JS function that accepts any data to go to the solidity contract function
+- Got to 
+
+
 # react-redux-dapp
 This is a template project that can be used as the basis for an Ethereum Dapp.
 
