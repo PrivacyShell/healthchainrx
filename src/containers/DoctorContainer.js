@@ -134,11 +134,7 @@ class DoctorContainer extends React.Component {
       printCheckbox: this.printCheckbox.checked,
     };
 
-    //console.log('formValues: ', formValues);
-
-
     let encoded = JSON.stringify(formValues);
-
     encoded += pd.prng(32);
     
     sha256_wrapper(encoded, (hash) => {
