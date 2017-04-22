@@ -206,7 +206,7 @@ class PrescriptionFormContainer extends React.Component {
             let expiresInDays = 20
             this.props.addPrescriptionDispatcher(dateIssued, expiresInDays, hash);
 
-            
+
 
             const delimiter = "£";
 
