@@ -33,3 +33,5 @@ function sha256_wrapper(input, cb){
     cb(digest);
   });
 }
+
+export default sha256_wrapper;

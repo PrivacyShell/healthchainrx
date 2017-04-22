@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { getAllAccounts } from '../reducers/accounts'
 import AddressDropdown from '../components/AddressDropdown'
 import { selectFromAddress,  getAllIdentities} from '../actions'
+import sha256_wrapper from '../crypto';
+var pd = require('probability-distributions');
 
 import DrugList from '../assets/DrugList';
 
@@ -133,6 +135,15 @@ class DoctorContainer extends React.Component {
     };
 
     //console.log('formValues: ', formValues);
+
+
+    let encoded = JSON.stringify(formValues);
+
+    encoded += pd.prng(32);
+    
+    sha256_wrapper(encoded, (hash) => {
+      console.log('sha256 hash: ', hash);
+    })
 
 
 
