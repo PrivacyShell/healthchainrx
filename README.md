@@ -7,7 +7,10 @@ SCRIPT FOR ADDING FUNCTION TO SOLIDITY AND CONNECTING:
 - run `truffle migrate`
 - Go to `middleware/` and find corresponding javascript
 	- Add corresponding JS function that accepts any data to go to the solidity contract function
-- Got to 
+- Go to `/src/actions/index.js` and create an action that will be called by GUI to invoke function
+	- Make sure to export that actions
+	- At top of file, import this from a reducer that will be created
+- Go to `/reducers/` and open the file 	
 
 
 # react-redux-dapp
