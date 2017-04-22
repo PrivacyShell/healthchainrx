@@ -9,7 +9,7 @@ contract HealthChainRx {
   }
 
   mapping (address => Identity) public identities;
-  identities["0xce1ff367bdf1eb16f6ee9f243ff0a55bb71a16ac"] = Identity({name: "joe"});
+  // identities["0xce1ff367bdf1eb16f6ee9f243ff0a55bb71a16ac"] = Identity({name: "joe"});
 
   function HealthChainRx() {
     owner = msg.sender;
