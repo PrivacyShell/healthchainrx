@@ -26,6 +26,7 @@ function hex(buffer) {
   return hexCodes.join("");
 }
 
+// call this function with the input as the string + nonce, along with a callback function
 function sha256_wrapper(input, cb){
   sha256(input).then(function(digest) {
     cb(digest);
