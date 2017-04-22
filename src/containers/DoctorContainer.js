@@ -4,6 +4,8 @@ import { getAllAccounts } from '../reducers/accounts'
 import AddressDropdown from '../components/AddressDropdown'
 import { selectFromAddress,  getAllIdentities} from '../actions'
 
+import DrugList from '../assets/DrugList';
+
 const $ = window.$;
 
 /* Fields
@@ -130,7 +132,10 @@ class DoctorContainer extends React.Component {
       printCheckbox: this.printCheckbox.checked,
     };
 
-    console.log('formValues: ', formValues);
+    //console.log('formValues: ', formValues);
+    
+
+
 
   }
 
@@ -139,10 +144,7 @@ class DoctorContainer extends React.Component {
     var $datePicker = $("#patient-dob-input").datetimepicker();
     var $input = $("#patient-prescription-input");
     $input.typeahead({
-      source: [
-        {id: "someId1", name: "Display name 1"},
-        {id: "someId2", name: "Display name 2"}
-      ],
+      source: DrugList,
       autoSelect: true
     });
     $input.change(function() {
