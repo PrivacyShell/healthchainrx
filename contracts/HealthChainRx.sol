@@ -1,6 +1,8 @@
 pragma solidity ^0.4.8;
 
 contract HealthChainRx {
+  uint BLOCKS_PER_DAY = 5760;
+
 
   address public owner;
   uint temp = 1;
@@ -40,17 +42,26 @@ contract HealthChainRx {
     return identities[id].name;
   }
 
-  function addPrescription(uint256 dateIssued, uint expiresInDays, bytes32 hash) returns (bool success) {
+  function addPrescription( uint expiresInDays, bytes32 hash) returns (bool success) {
     // TODO: Make sure that the sender in in the identites table, lookup that info to be used
     address doctor = msg.sender;
 
     prescriptions[hash] = Prescription({
         doctor: doctor,
-        dateIssued: dateIssued,
+        dateIssued: block.number,
         expiresInDays: expiresInDays,
         status: "new"
     });
     return true;
+  }
+
+  function isPrescriptionExpired(bytes32 hash) returns(bool isExpired){
+    uint currentBlock = block.number;
+    uint blockIssued = prescriptions[hash].dateIssued;
+    uint expiredInDays = prescriptions[hash].expiresInDays;
+    uint maxBlocks = expiredInDays * BLOCKS_PER_DAY;
+    uint blocksSinceIssue = currentBlock - blockIssued;
+    return (blocksSinceIssue > maxBlocks);
   }
 
   function getPrescriptionStatus() constant returns (string) {
