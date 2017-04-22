@@ -1,7 +1,7 @@
 import ethereum from '../middleware/ethereum'
 import { getIdentities } from '../middleware/HealthChainRx'
 import crypto from '../middleware/crypto'
-import { RECEIVE_ACCOUNTS } from '../reducers/accounts'
+import { RECEIVE_ACCOUNTS, SET_SELECTED_DOCTOR_ADDRESS, SET_SELECTED_PHARMA_ADDRESS } from '../reducers/accounts'
 import { RECEIVE_CRYPTOS } from '../reducers/cryptos'
 import { SELECT_CRYPTO, SELECT_FROM_ADDRESS, SELECT_TO_ADDRESS, ENTER_AMOUNT } from '../reducers/transfer'
 import { SHOW_TRANSACTIONS, ADD_TRANSACTION } from '../reducers/transactions'
@@ -13,6 +13,16 @@ import { addPrescription, verifyPrescription } from '../middleware/HealthChainRx
 import Web3 from 'web3'
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+
+export const setSelectedDoctorAddress = address => ({
+  type: SET_SELECTED_DOCTOR_ADDRESS,
+  address,
+})
+
+export const setSelectedPharmaAddress = address => ({
+  type: SET_SELECTED_PHARMA_ADDRESS,
+  address,
+})
 
 const recieveIdentities = identities => ({
   type: RECIEVE_IDENTITIES,
