@@ -7,7 +7,7 @@ import sha256_wrapper from '../crypto';
 var pd = require('probability-distributions');
 var QRCode = require('qrcode-svg');
 import DrugList from '../assets/DrugList';
-import QrReader from 'react-qr-reader'
+//import QrReader from 'react-qr-reader'
 
 const $ = window.$;
 
@@ -148,14 +148,6 @@ class DoctorContainer extends React.Component {
           </div>
 
 
-          <div className="row">
-            <QrReader
-                delay={this.state.delay}
-                style={previewStyle}
-                onError={this.handleError}
-                onScan={this.handleScan}
-            />
-          </div>
 
 
           <div className="row" ref={(c) => {this.qrCodeContainer = c;}}>
@@ -167,19 +159,19 @@ class DoctorContainer extends React.Component {
 
 
   }
-
-
-  handleScan(data){
-    console.log('handleScan: ', data);
-
-    let decoded = JSON.parse(data);
-    console.log('decoded: ', decoded);
-  }
-
-  handleError(err){
-    console.error(err)
-  }
-
+  //
+  //
+  //handleScan(data){
+  //  console.log('handleScan: ', data);
+  //
+  //  let decoded = JSON.parse(data);
+  //  console.log('decoded: ', decoded);
+  //}
+  //
+  //handleError(err){
+  //  console.error(err)
+  //}
+  //
 
 
 
@@ -193,23 +185,22 @@ class DoctorContainer extends React.Component {
       healthCard: this.healthCardInput.value,
       prescription: this.prescriptionInput.value,
       instructions: this.instructionsInput.value,
-      sendSmsCheckbox: this.sendSmsCheckbox.checked,
-      printCheckbox: this.printCheckbox.checked,
+      //sendSmsCheckbox: this.sendSmsCheckbox.checked,
+      //printCheckbox: this.printCheckbox.checked,
     };
 
     let encoded = JSON.stringify(formValues);
-    encoded += pd.prng(32);
+    let nonce = pd.prng(32);
+    encoded += nonce;
 
     sha256_wrapper(encoded, (hash) => {
-      console.log('sha256 hash: ', hash);
+      console.log('sha256 hash DOCTOR: ', hash);
       let dateIssued = new Date().getTime()
       let expiresInDays = 20
       this.props.addPrescriptionDispatcher(dateIssued, expiresInDays, hash);
 
-      const delimiter = "£";
-
       let qrCodeDataObj = {
-        n: hash,
+        n: nonce,
         p: formValues.prescription,
         i: formValues.instructions,
       }

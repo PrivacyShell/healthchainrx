@@ -43,7 +43,9 @@ const showPrescriptionQR = prescription => ({
 })
 
 export const addPrescriptionDispatcher = (dateIssued, expiresInDays, hash) => (dispatch, getState) => {
-  let success = addPrescription(dateIssued, expiresInDays, hash)
+  let storeState = getState();
+  let docAddress = storeState.accounts.selected.selectedDoctorAddress;
+  let success = addPrescription(dateIssued, expiresInDays, hash, docAddress)
   if (success) {
     dispatch(showPrescriptionQR({dateIssued, expiresInDays, hash}))
   } else {
@@ -63,13 +65,21 @@ const showError = status => ({
 
 export const verifyPrescriptionDispatcher = (hash) => (dispatch, getState) => {
 //  debugger
-  let status = verifyPrescription(hash)
+//  let status = verifyPrescription(hash)
+  verifyPrescription(hash).then((status) => {
+    console.log('STATUS: ', status);
+    if (status === "Good") {
+      dispatch(showSuccess(status))
+    } else {
+      dispatch(showError(status))
+    }
+  })
 
-  if (status === "Good") {
-    dispatch(showSuccess(status))
-  } else {
-    dispatch(showError(status))
-  }
+  //if (status === "Good") {
+  //  dispatch(showSuccess(status))
+  //} else {
+  //  dispatch(showError(status))
+  //}
 
 }
 
@@ -157,21 +167,21 @@ export const fetchTransactions = () => (dispatch, getState) => {
         console.log(error)
       } else{
         console.log(`result: ${result}`)
-        var block = web3.eth.getBlock(result, true)
-
-        console.log('block #' + block.number)
-        console.dir(block.transactions)
-        //console.log(web3.version)
-        //debugger
-
-        // we know there is only 1 txn per block in test...accessing only the first transactions
-        // in a block won't work beyond localhost
-        let txn = block.transactions[0]
-        txn.receipt = web3.eth.getTransactionReceipt(block.transactions[0].hash)
-        dispatch(addTransactionAction(txn))
-        dispatch(showTransactions(getState().transactions))
-        dispatch(getAllAccounts())
-        //debugger
+        //var block = web3.eth.getBlock(result, true)
+        //
+        //console.log('block #' + block.number)
+        //console.dir(block.transactions)
+        ////console.log(web3.version)
+        ////debugger
+        //
+        //// we know there is only 1 txn per block in test...accessing only the first transactions
+        //// in a block won't work beyond localhost
+        //let txn = block.transactions[0]
+        //txn.receipt = web3.eth.getTransactionReceipt(block.transactions[0].hash)
+        //dispatch(addTransactionAction(txn))
+        //dispatch(showTransactions(getState().transactions))
+        //dispatch(getAllAccounts())
+        ////debugger
       }
     }
   )

@@ -18,6 +18,8 @@ contract HealthChainRx {
       address dispensingPharmacy;
   }
 
+  event AddPrescription(address doctor);
+
   mapping (address => Identity) public identities;
   mapping (bytes32 => Prescription) public prescriptions;
 
@@ -51,6 +53,9 @@ contract HealthChainRx {
         dateDispensed: 0,
         dispensingPharmacy: 0x0
     });
+
+    AddPrescription(prescriptions[hash].doctor);
+
     return true;
   }
 

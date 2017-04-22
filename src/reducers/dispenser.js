@@ -10,13 +10,13 @@ const dispenser = (state = {}, action) => {
       return {
         ...state,
         type: "success",
-        status: action.dispenser.status
+        status: action.status
       }
       case SHOW_ERROR:
         return {
           ...state,
           type: "error",
-          status: action.dispenser.status
+          status: action.status
         }
     default:
       return state
