@@ -3,6 +3,7 @@
  */
 import Web3 from 'web3'
 import { getBalance, sendCoin } from './metacoin'
+import { getIdentityDetails } from './identities'
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 
@@ -12,6 +13,7 @@ export default {
   getAccounts: (cb) => {
     web3.eth.getAccounts(async function(error, addresses) {
       let _accounts = [];
+      let identityDetails = getIdentityDetails()
 
       for (var i = 0; i < addresses.length; i++) {
         let eth = web3.fromWei(web3.eth.getBalance(addresses[i]), 'ether')
@@ -19,6 +21,7 @@ export default {
           address: addresses[i],
           balance: eth,
           cadCoin: eth * CADcoin,
+          name: identityDetails.name,
           meta: await getBalance(addresses[i])
         })
       }

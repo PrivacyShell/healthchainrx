@@ -1,13 +1,29 @@
 import ethereum from '../middleware/ethereum'
+import { getIdentities } from '../middleware/HealthChainRx'
 import crypto from '../middleware/crypto'
 import { RECEIVE_ACCOUNTS } from '../reducers/accounts'
 import { RECEIVE_CRYPTOS } from '../reducers/cryptos'
 import { SELECT_CRYPTO, SELECT_FROM_ADDRESS, SELECT_TO_ADDRESS, ENTER_AMOUNT } from '../reducers/transfer'
 import { SHOW_TRANSACTIONS, ADD_TRANSACTION } from '../reducers/transactions'
+import { RECIEVE_IDENTITIES } from '../reducers/identities'
 
 import Web3 from 'web3'
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+
+const recieveIdentities = identities => ({
+  type: RECIEVE_IDENTITIES,
+  identities
+})
+
+export const getAllIdentities = () => (dispatch, getState) => {
+  //debugger
+  let identities = getIdentities().then(ids => {
+    dispatch(recieveIdentities(ids))
+
+  })
+
+}
 
 const receiveAccounts = accounts => ({
   type: RECEIVE_ACCOUNTS,
@@ -45,13 +61,6 @@ export const selectToAddress = address => (dispatch, getState) => {
 export const getAllAccounts = () => (dispatch, getState) => {
   ethereum.getAccounts(accounts => {
     dispatch(receiveAccounts(accounts))
-    if (typeof getState().transfer.detail.from === "undefined") {
-      dispatch(setFromAddress(accounts[0].address))
-    }
-    if (typeof getState().transfer.detail.to === "undefined") {
-      dispatch(setToAddress(accounts[1].address))
-    }
-
   })
 }
 
@@ -120,6 +129,7 @@ export const fetchTransactions = () => (dispatch, getState) => {
   )
 
 }
+
 
 export const RESET_ERROR_MESSAGE = 'RESET_ERROR_MESSAGE';
 
