@@ -64,9 +64,11 @@ class DoctorContainer extends React.Component {
                     })}
                   </select>
 
-
+                  {/*
                 <AddressDropdown id="doctor-input"
                   accounts={accounts} />
+                  */}
+
                 </div>
               </div>
             </div>
