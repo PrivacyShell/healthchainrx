@@ -47,3 +47,11 @@ export const verifyPrescription = async (hash) => {
   let status = await healthChainRx.getPrescriptionStatus.call(hash)
   return status
 }
+
+export const dispensePrescription = async (hash, pharmaAddress) => {
+  let healthChainRx = await HealthChainRx.deployed()
+
+  let status = await healthChainRx.dispensePrescription(hash, {from: pharmaAddress})
+  return status
+
+}

@@ -4,11 +4,11 @@ contract HealthChainRx {
   uint BLOCKS_PER_DAY = 5760;
 
   address public owner;
-  string thing;
   string hasher;
 
   event AddPrescription(address doctor);
   event ShowHash(string hasher);
+  event PrescriptionDispensed(address dispensingPharmacy);
 
   struct Identity {
       string name;
@@ -45,23 +45,6 @@ contract HealthChainRx {
     return identities[id].name;
   }
 
-  function setThing(string _thing) returns (string success) {
-    thing = _thing;
-    address doctor = msg.sender;
-
-    prescriptions[sha3(thing)] = Prescription({
-        doctor: doctor,
-        dateIssued: block.number,
-        expiresInDays: 1,
-        dateDispensed: 0,
-        dispensingPharmacy: 0x0
-    });
-
-    ShowHash(thing);
-    return thing;
-
-  }
-
   function addPrescription(uint expiresInDays, string _hasher) returns (string success) {
     hasher = _hasher;
     address doctor = msg.sender;
@@ -74,13 +57,10 @@ contract HealthChainRx {
         dispensingPharmacy: 0x0
     });
 
-    //AddPrescription(prescriptions[hasher].doctor);
-    ShowHash(hasher);
-
     return hasher;
   }
 
-  function isPrescriptionExpired(string hasher) returns(bool isExpired){
+  function isPrescriptionExpired(string hasher) returns (bool isExpired){
     if(prescriptions[sha3(hasher)].expiresInDays == 0) return false;
 
     uint currentBlock = block.number;
@@ -92,9 +72,6 @@ contract HealthChainRx {
   }
 
   function getPrescriptionStatus(string hasher) constant returns (string status) {
-      ShowHash(hasher);
-      //AddPrescription(prescriptions[hasher].doctor);
-
       // Does it exist
       if(prescriptions[sha3(hasher)].doctor == 0x0) {
         return "Does not exist";
@@ -106,7 +83,7 @@ contract HealthChainRx {
       }
 
       // Has it been filled
-      if(prescriptions[sha3(hasher)].dateDispensed != 0) {
+      if(prescriptions[sha3(hasher)].dispensingPharmacy != 0x0) {
         return "It has been dispensed";
       }
 
@@ -117,11 +94,12 @@ contract HealthChainRx {
 
   }
 
-  function dispensePrescription(string hasher) returns (bool success) {
+  function dispensePrescription(string hasher) returns (bool status) {
       // Check prescription status
       if (sha3(getPrescriptionStatus(hasher)) != sha3("Good")) {
         return false;
       }
+      prescriptions[sha3(hasher)].dispensingPharmacy = msg.sender;
 
       return true;
   }
