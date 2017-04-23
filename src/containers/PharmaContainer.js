@@ -61,6 +61,7 @@ class PharmaContainer extends React.Component {
                       <label htmlFor="patient-name-input">Name</label>
                       <input type="text"
                              ref={(c) => {this.nameInput = c;}}
+                             value="Dave"
                              className="form-control"
                              id="patient-name-input"
                              placeholder="Name"/>
@@ -69,6 +70,7 @@ class PharmaContainer extends React.Component {
                       <label htmlFor="patient-dob-input">Date of Birth</label>
                       <input type="text"
                              ref={(c) => {this.dobInput = c;}}
+                             value="04/22/2017 12:00 AM"
                              className="form-control"
                              id="patient-dob-input"
                              placeholder="Date of Birth"/>
@@ -77,6 +79,7 @@ class PharmaContainer extends React.Component {
                       <label htmlFor="patient-healthcard-input">Health Card #</label>
                       <input type="text"
                              ref={(c) => {this.healthCardInput = c;}}
+                             value="123"
                              className="form-control"
                              id="patient-healthcard-input"
                              placeholder="HealthCard #"/>

@@ -13,6 +13,12 @@ import { addPrescription, verifyPrescription } from '../middleware/HealthChainRx
 import Web3 from 'web3'
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+import { default as contract } from 'truffle-contract'
+// Import our contract artifacts and turn them into usable abstractions.
+import artifacts from '../../build/contracts/HealthChainRx.json'
+
+var HealthChainRx = contract(artifacts);
+HealthChainRx.setProvider(web3.currentProvider);
 
 export const setSelectedDoctorAddress = address => ({
   type: SET_SELECTED_DOCTOR_ADDRESS,
@@ -166,7 +172,10 @@ export const fetchTransactions = () => (dispatch, getState) => {
       if (error) {
         console.log(error)
       } else{
-        console.log(`result: ${result}`)
+        console.log(`result1: ${result}`)
+        let txr = web3.eth.getTransaction(result)
+        debugger
+        console.log(txr)
         //var block = web3.eth.getBlock(result, true)
         //
         //console.log('block #' + block.number)
@@ -188,6 +197,19 @@ export const fetchTransactions = () => (dispatch, getState) => {
 
 }
 
+export const watchPrescriptions = () => async (dispatch, getState) => {
+  let healthChainRx = await HealthChainRx.deployed()
+  let event = healthChainRx.ShowHash()
+  return event.watch((error, result) => {
+    if (error) {
+      console.log(error)
+    } else {
+      console.log(result)
+      debugger
+      //dispatch(prescriptionAction(result))
+    }
+  })
+}
 
 export const RESET_ERROR_MESSAGE = 'RESET_ERROR_MESSAGE';
 
