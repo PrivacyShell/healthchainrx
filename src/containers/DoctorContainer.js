@@ -9,6 +9,9 @@ var QRCode = require('qrcode-svg');
 import DrugList from '../assets/DrugList';
 //import QrReader from 'react-qr-reader'
 
+import { Router, Route, browserHistory } from 'react-router'
+
+
 const $ = window.$;
 
 /* Fields
@@ -148,32 +151,13 @@ class DoctorContainer extends React.Component {
           </div>
 
 
-
-
           <div className="row" ref={(c) => {this.qrCodeContainer = c;}}>
 
           </div>
 
         </div>
     )
-
-
   }
-  //
-  //
-  //handleScan(data){
-  //  console.log('handleScan: ', data);
-  //
-  //  let decoded = JSON.parse(data);
-  //  console.log('decoded: ', decoded);
-  //}
-  //
-  //handleError(err){
-  //  console.error(err)
-  //}
-  //
-
-
 
   onClickPrescribe(evt, two){
     evt.stopPropagation();
@@ -197,7 +181,7 @@ class DoctorContainer extends React.Component {
       console.log('sha256 hash DOCTOR: ', hash);
       let dateIssued = new Date().getTime()
       let expiresInDays = 20
-      this.props.addPrescriptionDispatcher(dateIssued, expiresInDays, hash);
+      //this.props.addPrescriptionDispatcher(dateIssued, expiresInDays, hash);
 
       let qrCodeDataObj = {
         n: nonce,
@@ -208,11 +192,16 @@ class DoctorContainer extends React.Component {
       let qrCodeData = JSON.stringify(qrCodeDataObj);
       //let qrCodeData = hash + delimiter + formValues.prescription + delimiter + formValues.instructions + delimiter;
 
-      var qrcode = new QRCode(qrCodeData);
-      var svg = qrcode.svg();
-      this.qrCodeContainer.innerHTML = svg;
+
+      this.props.addPrescriptionDispatcher(dateIssued, expiresInDays, hash, qrCodeData);
+
+
+      //var qrcode = new QRCode(qrCodeData);
+      //var svg = qrcode.svg();
+      //this.qrCodeContainer.innerHTML = svg;
       //document.getElementById("container").innerHTML = svg;
 
+      browserHistory.push('/prescription');
     })
   }
 
@@ -227,7 +216,9 @@ class DoctorContainer extends React.Component {
   }
 
   componentDidMount(){
-    var $datePicker = $("#patient-dob-input").datetimepicker();
+    var $datePicker = $("#patient-dob-input").datetimepicker({
+      format: 'MM/DD/YYYY',
+    });
     var $input = $("#patient-prescription-input");
     $input.typeahead({
       source: DrugList,

@@ -155,42 +155,13 @@ class PharmaContainer extends React.Component {
 
     sha256_wrapper(encoded, (hash) => {
       console.log('sha256 hash PHARMA: ', hash);
-
       let result = this.props.verifyPrescriptionDispatcher(hash);
-
       console.log('verifyPrescriptionDispatcher RESULT: ', result);
-
-      //let dateIssued = new Date().getTime()
-      //let expiresInDays = 20
-      //this.props.addPrescriptionDispatcher(dateIssued, expiresInDays, hash);
-      //
-      //let qrCodeDataObj = {
-      //  n: nonce,
-      //  p: formValues.prescription,
-      //  i: formValues.instructions,
-      //}
-      //
-      //let qrCodeData = JSON.stringify(qrCodeDataObj);
-      ////let qrCodeData = hash + delimiter + formValues.prescription + delimiter + formValues.instructions + delimiter;
-      //
-      //var qrcode = new QRCode(qrCodeData);
-      //var svg = qrcode.svg();
-      //this.qrCodeContainer.innerHTML = svg;
-      ////document.getElementById("container").innerHTML = svg;
-
     })
-
-
-
   }
 
-
   handleScan(data){
-    console.log('handleScan: ', data);
-
     let decoded = JSON.parse(data);
-    console.log('decoded: ', decoded);
-
     let {n,p,i} = decoded;
 
     this.setState({
@@ -198,14 +169,11 @@ class PharmaContainer extends React.Component {
       instructionValue: i,
       nonceValue: n,
     });
-
   }
 
   handleError(err){
     console.error(err)
   }
-
-
 
 }
 

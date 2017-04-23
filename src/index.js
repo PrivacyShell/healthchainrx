@@ -13,6 +13,8 @@ import { fetchTransactions } from './actions'
 import App from './containers/App'
 import DoctorContainer from './containers/DoctorContainer'
 import PharmaContainer from './containers/PharmaContainer'
+import PrescriptionFormContainer from './containers/PrescriptionFormContainer'
+
 
 const middleware = [ thunk ];
 if (process.env.NODE_ENV !== 'production') {
@@ -31,6 +33,7 @@ render(
     <Router history={browserHistory}>
       <Route path="/" component={App}>
         <Route path="doctor" component={DoctorContainer} />
+        <Route path="prescription" component={PrescriptionFormContainer} />
         <Route path="pharma" component={PharmaContainer} />
       </Route>
     </Router>

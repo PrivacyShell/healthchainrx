@@ -42,12 +42,12 @@ const showPrescriptionQR = prescription => ({
   prescription
 })
 
-export const addPrescriptionDispatcher = (dateIssued, expiresInDays, hash) => (dispatch, getState) => {
+export const addPrescriptionDispatcher = (dateIssued, expiresInDays, hash, qrCodeData, ) => (dispatch, getState) => {
   let storeState = getState();
   let docAddress = storeState.accounts.selected.selectedDoctorAddress;
   let success = addPrescription(dateIssued, expiresInDays, hash, docAddress)
   if (success) {
-    dispatch(showPrescriptionQR({dateIssued, expiresInDays, hash}))
+    dispatch(showPrescriptionQR({dateIssued, expiresInDays, hash, qrCodeData}))
   } else {
     console.log(`error adding prescription`)
   }

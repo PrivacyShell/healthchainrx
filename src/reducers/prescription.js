@@ -9,7 +9,8 @@ const prescription = (state = {}, action) => {
         ...state,
         dateIssued: action.prescription.dateIssued,
         expiresInDays: action.prescription.expiresInDays,
-        hash: action.prescription.hash
+        hash: action.prescription.hash,
+        qrCodeData: action.prescription.qrCodeData,
       }
     default:
       return state
