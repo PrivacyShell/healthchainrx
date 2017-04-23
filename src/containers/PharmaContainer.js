@@ -100,7 +100,7 @@ class PharmaContainer extends React.Component {
                       <label htmlFor="patient-dob-input">Date of Birth</label>
                       <input type="text"
                              ref={(c) => {this.dobInput = c;}}
-                             value="04/22/2017 12:00 AM"
+                             value="04/23/2017"
                              className="form-control"
                              id="patient-dob-input"
                              placeholder="Date of Birth"/>
