@@ -94,14 +94,14 @@ contract HealthChainRx {
 
   }
 
-  function dispensePrescription(string hasher) returns (bool status) {
+  function dispensePrescription(string hasher) returns (string status) {
       // Check prescription status
       if (sha3(getPrescriptionStatus(hasher)) != sha3("Good")) {
-        return false;
+        return "Failed";
       }
       prescriptions[sha3(hasher)].dispensingPharmacy = msg.sender;
 
-      return true;
+      return "Success";
   }
 
 }

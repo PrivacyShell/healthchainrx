@@ -9,6 +9,7 @@ import thunkMiddleware from 'redux-thunk'
 import reducer from './reducers'
 import { getAllAccounts } from './actions'
 import { watchPrescriptions } from './actions'
+import { fetchTransactions } from './actions'
 import App from './containers/App'
 import DoctorContainer from './containers/DoctorContainer'
 import PharmaContainer from './containers/PharmaContainer'
@@ -26,6 +27,7 @@ const store = createStore(
 )
 store.dispatch(getAllAccounts())
 store.dispatch(watchPrescriptions())
+store.dispatch(fetchTransactions())
 
 render(
   <Provider store={store}>

@@ -52,6 +52,7 @@ export const addPrescriptionDispatcher = (dateIssued, expiresInDays, hash, qrCod
   let storeState = getState();
   let docAddress = storeState.accounts.selected.selectedDoctorAddress;
   let success = addPrescription(dateIssued, expiresInDays, hash, docAddress)
+  console.log(`success: ${success}`)
   if (success) {
     dispatch(showPrescriptionQR({dateIssued, expiresInDays, hash, qrCodeData}))
   } else {
@@ -88,17 +89,14 @@ const dispense = status => ({
   status
 })
 
-export const dispenseDispatcher = (hash) => async (dispatch, getState) => {
+export const dispenseDispatcher = (hash) => (dispatch, getState) => {
   let storeState = getState();
   let pharmaAddress = storeState.accounts.selected.selectedPharmaAddress;
-  let status = await dispensePrescription(hash, pharmaAddress)
+  let status = dispensePrescription(hash, pharmaAddress)
+
     console.log('STATUS: ', status);
 
-    if (status === true) {
-      dispatch(dispense("Success"))
-    } else {
-      dispatch(dispense("Error dispensing"))
-    }
+    dispatch(dispense(status))
 }
 
 const receiveAccounts = accounts => ({
@@ -185,9 +183,8 @@ export const fetchTransactions = () => (dispatch, getState) => {
         console.log(error)
       } else{
         console.log(`result1: ${result}`)
-        let txr = web3.eth.getTransaction(result)
-        console.log(txr)
-        //var block = web3.eth.getBlock(result, true)
+        var block = web3.eth.getBlock(result, true)
+        debugger
         //
         //console.log('block #' + block.number)
         //console.dir(block.transactions)

@@ -38,6 +38,7 @@ export const addPrescription = async (dateIssued, expiresInDays, hash, docAddres
   console.log("It is type " + typeof hash)
 
   let success = await healthChainRx.addPrescription(expiresInDays, hash, {from: docAddress, gas: 500000})
+  return success
 }
 
 
