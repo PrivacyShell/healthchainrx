@@ -9,11 +9,11 @@ class PharmaWarningModal extends React.Component {
         super(props);
         this.state = {
             modalVisible: false,
-            modalMessage: 'There is a problem...',
         }
     }
 
     render(){
+
         let {message} = this.props;
         return (
                 <div className="modal fade" id="warning-modal" tabindex="-1" role="dialog">

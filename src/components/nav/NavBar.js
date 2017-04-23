@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import NavItem from './NavItem';
 import { Link } from 'react-router';
+var logo = require('./../../img/logoTransparent.png');
 
 export default class NavBar extends Component {
 
@@ -27,7 +28,10 @@ export default class NavBar extends Component {
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
               </button>
-              <Link className="navbar-brand" to="/">HealthChainRx</Link>
+              <Link className="navbar-brand" to="/" style={{color: "black"}}>
+                <img src={logo} style={{height: "28px", display: "inline-block"}} /> {' '}
+                HealthChainRx
+              </Link>
             </div>
             <div className="collapse navbar-collapse" id="nav-collapse">
               <ul className="nav navbar-nav">{this.props.navData.map(createLinkItem)} </ul>
