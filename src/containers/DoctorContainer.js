@@ -81,6 +81,7 @@ class DoctorContainer extends React.Component {
                       <label htmlFor="patient-name-input">Name</label>
                       <input type="text"
                              ref={(c) => {this.nameInput = c;}}
+                             value="Dave"
                              className="form-control"
                              id="patient-name-input"
                              placeholder="Name"/>
@@ -89,6 +90,7 @@ class DoctorContainer extends React.Component {
                       <label htmlFor="patient-dob-input">Date of Birth</label>
                       <input type="text"
                              ref={(c) => {this.dobInput = c;}}
+                             value="04/22/2017 12:00 AM"
                              className="form-control"
                              id="patient-dob-input"
                              placeholder="Date of Birth"/>
@@ -97,6 +99,7 @@ class DoctorContainer extends React.Component {
                       <label htmlFor="patient-healthcard-input">Health Card #</label>
                       <input type="text"
                              ref={(c) => {this.healthCardInput = c;}}
+                             value="123"
                              className="form-control"
                              id="patient-healthcard-input"
                              placeholder="HealthCard #"/>
@@ -105,6 +108,7 @@ class DoctorContainer extends React.Component {
                       <label htmlFor="patient-prescription-input">Prescription</label>
                       <input type="text"
                              ref={(c) => {this.prescriptionInput = c;}}
+                             value="CALCIJECT INJ 100MG/ML"
                              className="form-control"
                              id="patient-prescription-input"
                              placeholder="Prescription"/>
@@ -113,6 +117,7 @@ class DoctorContainer extends React.Component {
                       <label htmlFor="patient-prescription-instructions-input">Instructions</label>
                       <textarea type="text"
                              ref={(c) => {this.instructionsInput = c;}}
+                             value="it"
                              className="form-control"
                              id="patient-prescription-instructions-input"
                              placeholder="Instructions">

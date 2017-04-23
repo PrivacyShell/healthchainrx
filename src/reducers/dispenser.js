@@ -4,7 +4,6 @@ export const SHOW_SUCCESS = 'SHOW_SUCCESS'
 export const SHOW_ERROR = 'SHOW_ERROR'
 
 const dispenser = (state = {}, action) => {
-  debugger
   switch (action.type) {
     case SHOW_SUCCESS:
       return {
