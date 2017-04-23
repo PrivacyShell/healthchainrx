@@ -6,6 +6,8 @@ import { verifyPrescriptionDispatcher, setSelectedPharmaAddress} from '../action
 import QrReader from 'react-qr-reader'
 import sha256_wrapper from '../crypto';
 
+const $ = window.$;
+
 /* Fields
 - Name - text
 - DoB - datepicker
@@ -143,8 +145,35 @@ class PharmaContainer extends React.Component {
                 </div>
             </div>
           </div>
+
+
+          <div className="modal fade" id="warning-modal" tabindex="-1" role="dialog">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 className="modal-title">Warning!</h4>
+                </div>
+                <div className="modal-body">
+                  <p>There is a problem with the prescription</p>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
+                  <button type="button" className="btn btn-primary">OK</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
         </div>
     )
+  }
+
+  showModal(){
+    $('#warning-modal').modal({
+      show: true,
+    })
   }
 
 
@@ -198,6 +227,13 @@ class PharmaContainer extends React.Component {
 
   handleError(err){
     console.error(err)
+  }
+
+
+  componentDidMount(){
+    setTimeout(() => {
+      this.showModal();
+    },500);
   }
 
 }
