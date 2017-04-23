@@ -81,14 +81,20 @@ export const verifyPrescriptionDispatcher = (hash) => (dispatch, getState) => {
     }
   })
 
-  //if (status === "Good") {
-  //  dispatch(showSuccess(status))
-  //} else {
-  //  dispatch(showError(status))
-  //}
-
 }
 
+
+export const dispenseDispatcher = (hash) => (dispatch, getState) => {
+  dispense(hash).then((status) => {
+    console.log('STATUS: ', status);
+    if (status === "Good") {
+      dispatch(showSuccess(status))
+    } else {
+      dispatch(showError(status))
+    }
+  })
+
+}
 const receiveAccounts = accounts => ({
   type: RECEIVE_ACCOUNTS,
   accounts: accounts
@@ -174,7 +180,6 @@ export const fetchTransactions = () => (dispatch, getState) => {
       } else{
         console.log(`result1: ${result}`)
         let txr = web3.eth.getTransaction(result)
-        debugger
         console.log(txr)
         //var block = web3.eth.getBlock(result, true)
         //
@@ -205,7 +210,6 @@ export const watchPrescriptions = () => async (dispatch, getState) => {
       console.log(error)
     } else {
       console.log(result)
-      debugger
       //dispatch(prescriptionAction(result))
     }
   })

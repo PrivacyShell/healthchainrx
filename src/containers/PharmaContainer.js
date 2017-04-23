@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getAllAccounts } from '../reducers/accounts'
 import AddressDropdown from '../components/AddressDropdown'
-import { verifyPrescriptionDispatcher} from '../actions'
+import { verifyPrescriptionDispatcher, dispenseDispatcher} from '../actions'
 import QrReader from 'react-qr-reader'
 import sha256_wrapper from '../crypto';
 
@@ -33,7 +33,7 @@ class PharmaContainer extends React.Component {
 
   render(){
 
-    let { accounts, verifyPrescriptionDispatcher } = this.props;
+    let { accounts, verifyPrescriptionDispatcher, dispenseDispatcher } = this.props;
 
     const previewStyle = {
       height: 240,
@@ -114,6 +114,7 @@ class PharmaContainer extends React.Component {
                              placeholder="Nonce"/>
                     </div>
                     <button onClick={(...args) => this.onClickVerify(...args)}>Verify</button>
+                    <button onClick={(...args) => this.onClickDispense(...args)}>Dispense</button>
 
                 </div>
 
@@ -137,9 +138,28 @@ class PharmaContainer extends React.Component {
   }
 
   onClickVerify(){
-    let hash;
+    let formValues = {
+      name: this.nameInput.value,
+      dob: this.dobInput.value,
+      healthCard: this.healthCardInput.value,
+      prescription: this.prescriptionInput.value,
+      instructions: this.instructionsInput.value,
+    };
+
+    let nonce = this.nonceInput.value;
 
 
+    let encoded = JSON.stringify(formValues);
+    encoded += nonce;
+
+    sha256_wrapper(encoded, (hash) => {
+      console.log('sha256 hash PHARMA: ', hash);
+      let result = this.props.verifyPrescriptionDispatcher(hash);
+      console.log('verifyPrescriptionDispatcher RESULT: ', result);
+    })
+  }
+
+  onClickDispense(){
     let formValues = {
       name: this.nameInput.value,
       dob: this.dobInput.value,
@@ -158,7 +178,7 @@ class PharmaContainer extends React.Component {
 
     sha256_wrapper(encoded, (hash) => {
       console.log('sha256 hash PHARMA: ', hash);
-      let result = this.props.verifyPrescriptionDispatcher(hash);
+      let result = this.props.dispenseDispatcher(hash);
       console.log('verifyPrescriptionDispatcher RESULT: ', result);
     })
   }
@@ -188,5 +208,5 @@ class PharmaContainer extends React.Component {
 
   export default connect(
     mapStateToProps,
-    { verifyPrescriptionDispatcher }
+    { verifyPrescriptionDispatcher, dispenseDispatcher }
   )(PharmaContainer)
