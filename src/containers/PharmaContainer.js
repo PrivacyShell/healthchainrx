@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getAllAccounts } from '../reducers/accounts'
 import AddressDropdown from '../components/AddressDropdown'
-import { verifyPrescriptionDispatcher, dispenseDispatcher, setSelectedPharmaAddress} from '../actions'
+import { verifyPrescriptionDispatcher, dispenseDispatcher, setSelectedPharmaAddress, ackErrorDispatcher} from '../actions'
 import QrReader from 'react-qr-reader'
 import sha256_wrapper from '../crypto';
 var mortarPestleImage = require('../img/MortarPestle.jpg');
@@ -40,7 +40,7 @@ class PharmaContainer extends React.Component {
 
   render(){
 
-    let { accounts, verifyPrescriptionDispatcher, dispenseDispatcher } = this.props;
+    let { accounts, transactions, messenger, verifyPrescriptionDispatcher, dispenseDispatcher } = this.props;
 
     const previewStyle = {
       height: 240,
@@ -163,6 +163,9 @@ class PharmaContainer extends React.Component {
                         onError={this.handleError}
                         onScan={this.handleScan}
                     />
+                    <br />
+                    <br />
+                    <Receipt transactions={transactions} />
                   </div>
 
                 </div>
@@ -172,19 +175,13 @@ class PharmaContainer extends React.Component {
           </div>
 
           <PharmaWarningModal visible={this.state.modalVisible}
-                              onModalHidden={() => this.setState({modalVisible: false})}
-                              message={this.state.modalMessage} />
+                              onModalHidden={() => {this.setState({modalVisible: false, modalMessage: ''}); }}
+                              message={this.state.modalMessage}
+          />
 
         </div>
     )
   }
-
-  showModal(show = true){
-    $('#warning-modal').modal({
-      show: show,
-    })
-  }
-
 
   selectIdentity(){
     console.log('selectIdentity()');
@@ -197,11 +194,6 @@ class PharmaContainer extends React.Component {
   }
 
   onClickVerify(){
-
-    let currentVisible = this.state.modalVisible;
-    this.setState({
-      modalVisible: !currentVisible,
-    });
 
     let formValues = {
       name: this.nameInput.value,
@@ -279,6 +271,15 @@ class PharmaContainer extends React.Component {
 
   }
 
+  componentWillReceiveProps(nextProps, nextState) {
+    if(nextProps.messenger.type=="error" || (this.state.modalMessage != '' && this.props.messenger.message != nextProps.messenger.message)) {
+      this.setState({
+        modalVisible: true,
+        modalMessage: nextProps.messenger.message
+      })
+    }
+  }
+
   handleError(err){
     console.error(err)
   }
@@ -288,16 +289,44 @@ class PharmaContainer extends React.Component {
       format: 'MM/DD/YYYY',
     });
   }
+}
 
+class Receipt extends React.Component{
+  render() {
+    let transactions = this.props.transactions;
+    let step1 = '';
+    let step2 = '';
+
+    if(transactions && transactions[0]) {
+      step1 = "Submitting to block with tx " + transactions[0].hash.slice(-10);
+
+      if(transactions[0].receipt) {
+        step2 = "Mined into block " + transactions[0].receipt.blockNumber;
+      }
+    }
+
+
+
+    return (
+        <div>
+          <h3>Status of prescription</h3>
+          {step1}
+          <br />
+          {step2}
+        </div>
+    )
+  }
 }
 
 
 const mapStateToProps = state => ({
   accounts: getAllAccounts(state.accounts),
-  dispenser: state.dispenser
+  dispenser: state.dispenser,
+  transactions: state.transactions,
+  messenger: state.messenger
 })
 
 export default connect(
   mapStateToProps,
-  { verifyPrescriptionDispatcher, dispenseDispatcher, setSelectedPharmaAddress }
+  { verifyPrescriptionDispatcher, dispenseDispatcher, setSelectedPharmaAddress, ackErrorDispatcher }
 )(PharmaContainer)

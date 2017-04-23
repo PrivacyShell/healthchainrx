@@ -7,7 +7,7 @@ import { SELECT_CRYPTO, SELECT_FROM_ADDRESS, SELECT_TO_ADDRESS, ENTER_AMOUNT } f
 import { SHOW_TRANSACTIONS, ADD_TRANSACTION, UPDATE_TRANSACTIONS } from '../reducers/transactions'
 import { RECIEVE_IDENTITIES } from '../reducers/identities'
 import { SHOW_PRESCRIPTION_QR } from '../reducers/prescription'
-import { SHOW_SUCCESS, SHOW_ERROR } from '../reducers/dispenser'
+import { SHOW_SUCCESS, SHOW_ERROR, ACK_ERROR } from '../reducers/dispenser'
 import { addPrescription, verifyPrescription, dispensePrescription } from '../middleware/HealthChainRx'
 
 import Web3 from 'web3'
@@ -69,6 +69,14 @@ const showError = status => ({
   status
 })
 
+const ackError = () => ({
+  type: ACK_ERROR
+})
+
+export const ackErrorDispatcher = () => (dispatch, getState) => {
+  dispatch(ackError())
+}
+
 export const verifyPrescriptionDispatcher = (hash) => (dispatch, getState) => {
   verifyPrescription(hash).then((status) => {
     console.log('STATUS: ', status);
@@ -84,8 +92,14 @@ export const verifyPrescriptionDispatcher = (hash) => (dispatch, getState) => {
 export const dispenseDispatcher = (hash) => async (dispatch, getState) => {
   let storeState = getState();
   let pharmaAddress = storeState.accounts.selected.selectedPharmaAddress;
-  let txn = await dispensePrescription(hash, pharmaAddress)
-  dispatch(addTransactionAction(txn))
+  let status = await verifyPrescription(hash)
+  console.log('STATUS: ', status);
+  if (status === "Good") {
+    let txn = await dispensePrescription(hash, pharmaAddress)
+    dispatch(addTransactionAction(txn))
+  } else {
+    dispatch(showError(status))
+  }
 }
 
 const receiveAccounts = accounts => ({

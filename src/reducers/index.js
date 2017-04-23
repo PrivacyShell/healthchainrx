@@ -5,5 +5,6 @@ import transactions from './transactions'
 import identities from './identities'
 import prescription from './prescription'
 import dispenser from './dispenser'
+import messenger from './messenger'
 
-export default combineReducers({ accounts, identities, transactions, prescription, dispenser })
+export default combineReducers({ accounts, identities, transactions, prescription, dispenser, messenger })
