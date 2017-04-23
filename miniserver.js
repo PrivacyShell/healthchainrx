@@ -5,7 +5,7 @@ var app = express()
 var twilio = require('twilio');
 
 // Find your account sid and auth token in your Twilio account Console.
-var client = twilio('AC7eb559bac7b781f9661ab6b6037a46aa', '5a4fcf936c352bb85e935fadd220c7a7');
+var client = twilio('SID', 'TOKEN');
 
 //Send the text message.
 // client.sendMessage({
