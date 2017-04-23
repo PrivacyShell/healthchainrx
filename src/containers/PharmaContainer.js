@@ -7,8 +7,9 @@ import QrReader from 'react-qr-reader'
 import sha256_wrapper from '../crypto';
 var mortarPestleImage = require('../img/MortarPestle.jpg');
 var checkmarkImage = require('../img/checkmark.png');
-
 const $ = window.$;
+
+import PharmaWarningModal from '../components/modal/PharmaWarningModal';
 
 /* Fields
 - Name - text
@@ -30,6 +31,8 @@ class PharmaContainer extends React.Component {
       prescriptionValue: null,
       instructionValue: null,
       nonceValue: null,
+      modalVisible: false,
+      modalMessage: 'There is a problem with the prescription...',
     }
     this.handleScan = this.handleScan.bind(this);
     this.handleError = this.handleError.bind(this);
@@ -84,10 +87,6 @@ class PharmaContainer extends React.Component {
               <div className="row">
                 <div className="col-sm-6">
 
-                  <div className="form-group">
-                    <label htmlFor="pharma-input">Doctor</label>
-
-                  </div>
                     <div className="form-group">
                       <label htmlFor="patient-name-input">Name</label>
                       <input type="text"
@@ -157,7 +156,7 @@ class PharmaContainer extends React.Component {
                 </div>
 
                 <div className="col-sm-6">
-                  <div className="row">
+                  <div className="row qr-reader-row">
                     <QrReader
                         delay={this.state.delay}
                         style={previewStyle}
@@ -172,33 +171,17 @@ class PharmaContainer extends React.Component {
             </div>
           </div>
 
-
-          <div className="modal fade" id="warning-modal" tabindex="-1" role="dialog">
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 className="modal-title">Warning!</h4>
-                </div>
-                <div className="modal-body">
-                  <p>There is a problem with the prescription</p>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-                  <button type="button" className="btn btn-primary">OK</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          <PharmaWarningModal visible={this.state.modalVisible}
+                              onModalHidden={() => this.setState({modalVisible: false})}
+                              message={this.state.modalMessage} />
 
         </div>
     )
   }
 
-  showModal(){
+  showModal(show = true){
     $('#warning-modal').modal({
-      show: true,
+      show: show,
     })
   }
 
@@ -214,6 +197,12 @@ class PharmaContainer extends React.Component {
   }
 
   onClickVerify(){
+
+    let currentVisible = this.state.modalVisible;
+    this.setState({
+      modalVisible: !currentVisible,
+    });
+
     let formValues = {
       name: this.nameInput.value,
       dob: this.dobInput.value,
@@ -260,36 +249,55 @@ class PharmaContainer extends React.Component {
   }
 
   handleScan(data){
-    let decoded = JSON.parse(data);
-    let {n,p,i} = decoded;
+    let decoded = null;
+    try{
+      decoded = JSON.parse(data);
+    }catch(err){
+      this.setState({
+        modalMessage: 'There was an error parsing the QR code',
+        modalVisible: true,
+      });
+    }
 
-    this.setState({
-      prescriptionValue: p,
-      instructionValue: i,
-      nonceValue: n,
-    });
+    if(decoded){
+      let {n,p,i} = decoded;
+
+      if(n && p && i){
+        this.setState({
+          prescriptionValue: p,
+          instructionValue: i,
+          nonceValue: n,
+        });
+      } else {
+        this.setState({
+          modalMessage: 'There was an error parsing the QR code',
+          modalVisible: true,
+        });
+      }
+    }
+
+
   }
 
   handleError(err){
     console.error(err)
   }
 
-
   componentDidMount(){
-    setTimeout(() => {
-      this.showModal();
-    },500);
+    var $datePicker = $("#patient-dob-input").datetimepicker({
+      format: 'MM/DD/YYYY',
+    });
   }
 
 }
 
 
-  const mapStateToProps = state => ({
-    accounts: getAllAccounts(state.accounts),
-    dispenser: state.dispenser
-  })
+const mapStateToProps = state => ({
+  accounts: getAllAccounts(state.accounts),
+  dispenser: state.dispenser
+})
 
-  export default connect(
-    mapStateToProps,
-    { verifyPrescriptionDispatcher, dispenseDispatcher, setSelectedPharmaAddress }
-  )(PharmaContainer)
+export default connect(
+  mapStateToProps,
+  { verifyPrescriptionDispatcher, dispenseDispatcher, setSelectedPharmaAddress }
+)(PharmaContainer)
