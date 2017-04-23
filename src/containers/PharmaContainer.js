@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getAllAccounts } from '../reducers/accounts'
 import AddressDropdown from '../components/AddressDropdown'
-import { verifyPrescriptionDispatcher} from '../actions'
+import { verifyPrescriptionDispatcher, setSelectedPharmaAddress} from '../actions'
 import QrReader from 'react-qr-reader'
 import sha256_wrapper from '../crypto';
 
@@ -46,6 +46,18 @@ class PharmaContainer extends React.Component {
             <div className="panel panel-primary">
               <div className="panel-heading">
                 <h3>Pharmacy</h3>
+
+                <select className="form-control"
+                        ref={(c) => {this.pharmaInput = c;}}
+                        onChange={(...args) => this.selectIdentity(...args)}>
+                  <option data-key={null}>Select Pharmacy</option>
+                  {accounts.map((account) => {
+                    return (
+                        <option data-key={account.address}>{account.name}</option>
+                    )
+                  })}
+                </select>
+
               </div>
             </div>
             <div className="panel-body">
@@ -54,8 +66,7 @@ class PharmaContainer extends React.Component {
 
                   <div className="form-group">
                     <label htmlFor="pharma-input">Doctor</label>
-                  <AddressDropdown id="pharam-input"
-                    accounts={accounts} />
+
                   </div>
                     <div className="form-group">
                       <label htmlFor="patient-name-input">Name</label>
@@ -136,6 +147,17 @@ class PharmaContainer extends React.Component {
     )
   }
 
+
+  selectIdentity(){
+    console.log('selectIdentity()');
+    let elem = this.pharmaInput;
+    let selectedOption = elem.options[elem.selectedIndex];
+    let key = selectedOption.getAttribute("data-key");
+    if(key && key.length){
+      this.props.setSelectedPharmaAddress(key);
+    }
+  }
+
   onClickVerify(){
     let hash;
 
@@ -188,5 +210,5 @@ class PharmaContainer extends React.Component {
 
   export default connect(
     mapStateToProps,
-    { verifyPrescriptionDispatcher }
+    { verifyPrescriptionDispatcher, setSelectedPharmaAddress }
   )(PharmaContainer)
