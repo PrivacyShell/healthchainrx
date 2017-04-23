@@ -4,6 +4,8 @@ import expect from 'expect'
 
 export const RECEIVE_ACCOUNTS = 'RECEIVE_ACCOUNTS'
 export const ADD_ACCOUNT = 'ADD_ACCOUNT'
+export const SET_SELECTED_DOCTOR_ADDRESS = 'SET_SELECTED_DOCTOR_ADDRESS'
+export const SET_SELECTED_PHARMA_ADDRESS = 'SET_SELECTED_PHARMA_ADDRESS'
 
 const accounts = (state = {}, action) => {
   switch (action.type) {
@@ -27,6 +29,18 @@ const byAddress = (state = {}, action) => {
           return obj
         }, {})
       }
+
+    case SET_SELECTED_DOCTOR_ADDRESS:
+      return {
+        ... state,
+        selectedDoctorAddress: action.address,
+      }
+    case SET_SELECTED_PHARMA_ADDRESS:
+      return {
+        ... state,
+        selectedPharmaAddress: action.address,
+      }
+
       default:
         const { accountAddress } = action
         if (accountAddress) {
@@ -39,6 +53,28 @@ const byAddress = (state = {}, action) => {
   }
 }
 
+
+const selected = (state = {}, action) => {
+  switch (action.type) {
+    case SET_SELECTED_DOCTOR_ADDRESS:
+      return {
+        ... state,
+        selectedDoctorAddress: action.address,
+      }
+    case SET_SELECTED_PHARMA_ADDRESS:
+      return {
+        ... state,
+        selectedPharmaAddress: action.address,
+      }
+    default:
+      return state
+  }
+}
+
+
+
+
+
 const allAccounts = (state = [], action) => {
   switch (action.type) {
     case RECEIVE_ACCOUNTS:
@@ -50,7 +86,8 @@ const allAccounts = (state = [], action) => {
 
 export default combineReducers({
   byAddress,
-  allAccounts
+  allAccounts,
+  selected
 })
 
 export const getAccount = (state, address) =>

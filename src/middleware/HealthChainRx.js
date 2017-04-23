@@ -31,9 +31,17 @@ export const addIdentity = async (name, location) => {
   console.log(theName)
 }
 
-export const addPrescription = async (dateIssued, expiresInDays, hash) => {
+export const addPrescription = async (dateIssued, expiresInDays, hash, docAddress) => {
   let healthChainRx = await HealthChainRx.deployed()
 
-  let success = await healthChainRx.addPrescription(dateIssued, expiresInDays, hash, {from: web3.eth.coinbase, gas: 500000})
+  let success = await healthChainRx.addPrescription(dateIssued, expiresInDays, hash, {from: docAddress, gas: 500000})
   return success
+}
+
+
+export const verifyPrescription = async (hash) => {
+  let healthChainRx = await HealthChainRx.deployed()
+
+  let status = await healthChainRx.getPrescriptionStatus.call(hash)
+  return status
 }

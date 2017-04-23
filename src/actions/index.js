@@ -1,18 +1,28 @@
 import ethereum from '../middleware/ethereum'
 import { getIdentities } from '../middleware/HealthChainRx'
 import crypto from '../middleware/crypto'
-import { RECEIVE_ACCOUNTS } from '../reducers/accounts'
+import { RECEIVE_ACCOUNTS, SET_SELECTED_DOCTOR_ADDRESS, SET_SELECTED_PHARMA_ADDRESS } from '../reducers/accounts'
 import { RECEIVE_CRYPTOS } from '../reducers/cryptos'
 import { SELECT_CRYPTO, SELECT_FROM_ADDRESS, SELECT_TO_ADDRESS, ENTER_AMOUNT } from '../reducers/transfer'
 import { SHOW_TRANSACTIONS, ADD_TRANSACTION } from '../reducers/transactions'
 import { RECIEVE_IDENTITIES } from '../reducers/identities'
 import { SHOW_PRESCRIPTION_QR } from '../reducers/prescription'
-
-import { addPrescription } from '../middleware/HealthChainRx'
+import { SHOW_SUCCESS, SHOW_ERROR } from '../reducers/dispenser'
+import { addPrescription, verifyPrescription } from '../middleware/HealthChainRx'
 
 import Web3 from 'web3'
 
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+
+export const setSelectedDoctorAddress = address => ({
+  type: SET_SELECTED_DOCTOR_ADDRESS,
+  address,
+})
+
+export const setSelectedPharmaAddress = address => ({
+  type: SET_SELECTED_PHARMA_ADDRESS,
+  address,
+})
 
 const recieveIdentities = identities => ({
   type: RECIEVE_IDENTITIES,
@@ -33,12 +43,44 @@ const showPrescriptionQR = prescription => ({
 })
 
 export const addPrescriptionDispatcher = (dateIssued, expiresInDays, hash) => (dispatch, getState) => {
-  let success = addPrescription(dateIssued, expiresInDays, hash)
+  let storeState = getState();
+  let docAddress = storeState.accounts.selected.selectedDoctorAddress;
+  let success = addPrescription(dateIssued, expiresInDays, hash, docAddress)
   if (success) {
     dispatch(showPrescriptionQR({dateIssued, expiresInDays, hash}))
   } else {
     console.log(`error adding prescription`)
   }
+}
+
+const showSuccess = status => ({
+  type: SHOW_SUCCESS,
+  status
+})
+
+const showError = status => ({
+  type: SHOW_ERROR,
+  status
+})
+
+export const verifyPrescriptionDispatcher = (hash) => (dispatch, getState) => {
+//  debugger
+//  let status = verifyPrescription(hash)
+  verifyPrescription(hash).then((status) => {
+    console.log('STATUS: ', status);
+    if (status === "Good") {
+      dispatch(showSuccess(status))
+    } else {
+      dispatch(showError(status))
+    }
+  })
+
+  //if (status === "Good") {
+  //  dispatch(showSuccess(status))
+  //} else {
+  //  dispatch(showError(status))
+  //}
+
 }
 
 const receiveAccounts = accounts => ({
@@ -125,21 +167,21 @@ export const fetchTransactions = () => (dispatch, getState) => {
         console.log(error)
       } else{
         console.log(`result: ${result}`)
-        var block = web3.eth.getBlock(result, true)
-
-        console.log('block #' + block.number)
-        console.dir(block.transactions)
-        //console.log(web3.version)
-        //debugger
-
-        // we know there is only 1 txn per block in test...accessing only the first transactions
-        // in a block won't work beyond localhost
-        let txn = block.transactions[0]
-        txn.receipt = web3.eth.getTransactionReceipt(block.transactions[0].hash)
-        dispatch(addTransactionAction(txn))
-        dispatch(showTransactions(getState().transactions))
-        dispatch(getAllAccounts())
-        //debugger
+        //var block = web3.eth.getBlock(result, true)
+        //
+        //console.log('block #' + block.number)
+        //console.dir(block.transactions)
+        ////console.log(web3.version)
+        ////debugger
+        //
+        //// we know there is only 1 txn per block in test...accessing only the first transactions
+        //// in a block won't work beyond localhost
+        //let txn = block.transactions[0]
+        //txn.receipt = web3.eth.getTransactionReceipt(block.transactions[0].hash)
+        //dispatch(addTransactionAction(txn))
+        //dispatch(showTransactions(getState().transactions))
+        //dispatch(getAllAccounts())
+        ////debugger
       }
     }
   )

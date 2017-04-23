@@ -24,6 +24,7 @@ const store = createStore(
   applyMiddleware(thunkMiddleware, ...middleware),
 )
 store.dispatch(getAllAccounts())
+store.dispatch(fetchTransactions())
 
 render(
   <Provider store={store}>

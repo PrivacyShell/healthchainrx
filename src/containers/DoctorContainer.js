@@ -2,11 +2,12 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getAllAccounts } from '../reducers/accounts'
 import AddressDropdown from '../components/AddressDropdown'
-import { selectFromAddress,  getAllIdentities, addPrescriptionDispatcher } from '../actions'
+import { selectFromAddress,  getAllIdentities, addPrescriptionDispatcher, setSelectedDoctorAddress } from '../actions'
 import sha256_wrapper from '../crypto';
 var pd = require('probability-distributions');
-
+var QRCode = require('qrcode-svg');
 import DrugList from '../assets/DrugList';
+//import QrReader from 'react-qr-reader'
 
 const $ = window.$;
 
@@ -26,11 +27,22 @@ QR Code (with print and/or send (via sms or email))
 class DoctorContainer extends React.Component {
   constructor(props){
     super(props);
+    this.state = {
+      delay: 100,
+    }
   }
 
   render(){
 
     let {accounts, identities, getAllIdentities} = this.props;
+
+    console.log('accounts: ', accounts);
+
+    const previewStyle = {
+      height: 240,
+      width: 320,
+    }
+
 
     return (
         <div className="container">
@@ -40,8 +52,23 @@ class DoctorContainer extends React.Component {
                 <h3>Doctor</h3>
                 <div className="form-group">
                   <label for="doctor-input">Doctor</label>
+
+                  <select className="form-control"
+                          ref={(c) => {this.doctorInput = c;}}
+                          onChange={(...args) => this.selectIdentity(...args)}>
+                    <option data-key={null}>Select Doctor</option>
+                    {accounts.map((account) => {
+                      return (
+                          <option data-key={account.address}>{account.name}</option>
+                      )
+                    })}
+                  </select>
+
+                  {/*
                 <AddressDropdown id="doctor-input"
                   accounts={accounts} />
+                  */}
+
                 </div>
               </div>
             </div>
@@ -51,7 +78,7 @@ class DoctorContainer extends React.Component {
 
                   <form>
                     <div className="form-group">
-                      <label for="patient-name-input">Name</label>
+                      <label htmlFor="patient-name-input">Name</label>
                       <input type="text"
                              ref={(c) => {this.nameInput = c;}}
                              className="form-control"
@@ -59,7 +86,7 @@ class DoctorContainer extends React.Component {
                              placeholder="Name"/>
                     </div>
                     <div className="form-group">
-                      <label for="patient-dob-input">Date of Birth</label>
+                      <label htmlFor="patient-dob-input">Date of Birth</label>
                       <input type="text"
                              ref={(c) => {this.dobInput = c;}}
                              className="form-control"
@@ -67,7 +94,7 @@ class DoctorContainer extends React.Component {
                              placeholder="Date of Birth"/>
                     </div>
                     <div className="form-group">
-                      <label for="patient-healthcard-input">Health Card #</label>
+                      <label htmlFor="patient-healthcard-input">Health Card #</label>
                       <input type="text"
                              ref={(c) => {this.healthCardInput = c;}}
                              className="form-control"
@@ -75,7 +102,7 @@ class DoctorContainer extends React.Component {
                              placeholder="HealthCard #"/>
                     </div>
                     <div className="form-group">
-                      <label for="patient-prescription-input">Prescription</label>
+                      <label htmlFor="patient-prescription-input">Prescription</label>
                       <input type="text"
                              ref={(c) => {this.prescriptionInput = c;}}
                              className="form-control"
@@ -83,7 +110,7 @@ class DoctorContainer extends React.Component {
                              placeholder="Prescription"/>
                     </div>
                     <div className="form-group">
-                      <label for="patient-prescription-instructions-input">Instructions</label>
+                      <label htmlFor="patient-prescription-instructions-input">Instructions</label>
                       <textarea type="text"
                              ref={(c) => {this.instructionsInput = c;}}
                              className="form-control"
@@ -119,11 +146,34 @@ class DoctorContainer extends React.Component {
               </div>
             </div>
           </div>
+
+
+
+
+          <div className="row" ref={(c) => {this.qrCodeContainer = c;}}>
+
+          </div>
+
         </div>
     )
 
 
   }
+  //
+  //
+  //handleScan(data){
+  //  console.log('handleScan: ', data);
+  //
+  //  let decoded = JSON.parse(data);
+  //  console.log('decoded: ', decoded);
+  //}
+  //
+  //handleError(err){
+  //  console.error(err)
+  //}
+  //
+
+
 
   onClickPrescribe(evt, two){
     evt.stopPropagation();
@@ -133,27 +183,48 @@ class DoctorContainer extends React.Component {
       name: this.nameInput.value,
       dob: this.dobInput.value,
       healthCard: this.healthCardInput.value,
-      prescriptionInput: this.prescriptionInput.value,
-      instructionsInput: this.instructionsInput.value,
-      sendSmsCheckbox: this.sendSmsCheckbox.checked,
-      printCheckbox: this.printCheckbox.checked,
+      prescription: this.prescriptionInput.value,
+      instructions: this.instructionsInput.value,
+      //sendSmsCheckbox: this.sendSmsCheckbox.checked,
+      //printCheckbox: this.printCheckbox.checked,
     };
 
     let encoded = JSON.stringify(formValues);
-    encoded += pd.prng(32);
+    let nonce = pd.prng(32);
+    encoded += nonce;
 
     sha256_wrapper(encoded, (hash) => {
-      console.log('sha256 hash: ', hash);
+      console.log('sha256 hash DOCTOR: ', hash);
       let dateIssued = new Date().getTime()
       let expiresInDays = 20
-      this.props.addPrescriptionDispatcher(dateIssued, expiresInDays, hash)
+      this.props.addPrescriptionDispatcher(dateIssued, expiresInDays, hash);
+
+      let qrCodeDataObj = {
+        n: nonce,
+        p: formValues.prescription,
+        i: formValues.instructions,
+      }
+
+      let qrCodeData = JSON.stringify(qrCodeDataObj);
+      //let qrCodeData = hash + delimiter + formValues.prescription + delimiter + formValues.instructions + delimiter;
+
+      var qrcode = new QRCode(qrCodeData);
+      var svg = qrcode.svg();
+      this.qrCodeContainer.innerHTML = svg;
+      //document.getElementById("container").innerHTML = svg;
+
     })
-
-
-
-
   }
 
+  selectIdentity(){
+    console.log('selectIdentity()');
+    let elem = this.doctorInput;
+    let selectedOption = elem.options[elem.selectedIndex];
+    let key = selectedOption.getAttribute("data-key");
+    if(key && key.length){
+      this.props.setSelectedDoctorAddress(key);
+    }
+  }
 
   componentDidMount(){
     var $datePicker = $("#patient-dob-input").datetimepicker();
@@ -186,5 +257,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getAllIdentities, addPrescriptionDispatcher }
+  { getAllIdentities, addPrescriptionDispatcher, setSelectedDoctorAddress }
 )(DoctorContainer)
