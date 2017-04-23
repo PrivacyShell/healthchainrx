@@ -14,6 +14,7 @@ import App from './containers/App'
 import DoctorContainer from './containers/DoctorContainer'
 import PharmaContainer from './containers/PharmaContainer'
 import PrescriptionFormContainer from './containers/PrescriptionFormContainer'
+import FakeGenerator from './containers/FakeGenerator'
 
 
 const middleware = [ thunk ];
@@ -36,6 +37,7 @@ render(
         <Route path="doctor" component={DoctorContainer} />
         <Route path="prescription" component={PrescriptionFormContainer} />
         <Route path="pharma" component={PharmaContainer} />
+        <Route path="fake" component={FakeGenerator} />
       </Route>
     </Router>
   </Provider>,

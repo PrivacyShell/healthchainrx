@@ -8,6 +8,7 @@ var pd = require('probability-distributions');
 var QRCode = require('qrcode-svg');
 import DrugList from '../assets/DrugList';
 import QrReader from 'react-qr-reader'
+var logoImage = require('../');
 
 const $ = window.$;
 

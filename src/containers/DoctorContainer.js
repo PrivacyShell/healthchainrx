@@ -111,6 +111,15 @@ class DoctorContainer extends React.Component {
                              placeholder="Name"/>
                     </div>
                     <div className="form-group">
+                      <label htmlFor="patient-email-input">Patient Email</label>
+                      <input type="text"
+                             ref={(c) => {this.emailInput = c;}}
+                             value="dave@gmail.com"
+                             className="form-control"
+                             id="patient-email-input"
+                             placeholder="Patient Email"/>
+                    </div>
+                    <div className="form-group">
                       <label htmlFor="patient-dob-input">Date of Birth</label>
                       <input type="text"
                              ref={(c) => {this.dobInput = c;}}
