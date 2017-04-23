@@ -9,16 +9,16 @@ import { addIdentity } from './HealthChainRx'
 const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 
 var identityDetails = [
-  {"name": "Shoppers 23", "location": "1 King St. W"},
-  {"name": "Shoppers 24", "location": "1 King St. W"},
-  {"name": "Shoppers 25", "location": "1 King St. W" },
-  {"name": "Shoppers 26", "location": "1 King St. W" },
-  {"name": "Dr. James", "location": "1 King St. W" },
-  {"name": "Dr. Bethell", "location": "1 King St. W" },
-  {"name": "Dr. Malik Pula 28", "location": "1 King St. W" },
-  {"name": "Dr. Paul McHardy", "location": "1 King St. W" },
-  {"name": "Dr. Richard Winston", "location": "1 King St. W" },
-  {"name": "Dr. Maria Mark", "location": "1 King St. W" }
+  {"category": "pharma", "name": "Shoppers HBC", "location": "1 King St. W"},
+  {"category": "pharma", "name": "Rexall Spadina", "location": "1 King St. W"},
+  {"category": "pharma", "name": "Parkside Pharmacy", "location": "1 King St. W" },
+  {"category": "pharma", "name": "Loblaws Broadview", "location": "1 King St. W" },
+  {"category": "doc", "name": "Dr. James", "location": "1 King St. W" },
+  {"category": "doc", "name": "Dr. Bethell", "location": "1 King St. W" },
+  {"category": "doc", "name": "Dr. Malik Pula 28", "location": "1 King St. W" },
+  {"category": "doc", "name": "Dr. Paul McHardy", "location": "1 King St. W" },
+  {"category": "doc", "name": "Dr. Richard Winston", "location": "1 King St. W" },
+  {"category": "doc", "name": "Dr. Maria Mark", "location": "1 King St. W" }
 ]
 
 export default {
@@ -33,6 +33,7 @@ export default {
           balance: eth,
           name: identityDetails[i].name,
           location: identityDetails[i].location,
+          category: identityDetails[i].category,
           meta: await getBalance(addresses[i])
         })
         addIdentity(identityDetails[i].name, identityDetails[i].location)

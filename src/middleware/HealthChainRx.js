@@ -38,6 +38,7 @@ export const addPrescription = async (dateIssued, expiresInDays, hash, docAddres
   console.log("It is type " + typeof hash)
 
   let success = await healthChainRx.addPrescription(expiresInDays, hash, {from: docAddress, gas: 500000})
+  return success
 }
 
 
@@ -46,4 +47,12 @@ export const verifyPrescription = async (hash) => {
 
   let status = await healthChainRx.getPrescriptionStatus.call(hash)
   return status
+}
+
+export const dispensePrescription = async (hash, pharmaAddress) => {
+  let healthChainRx = await HealthChainRx.deployed()
+
+  let status = await healthChainRx.dispensePrescription(hash, {from: pharmaAddress})
+  return status
+
 }

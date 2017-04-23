@@ -8,6 +8,7 @@ var pd = require('probability-distributions');
 var QRCode = require('qrcode-svg');
 import DrugList from '../assets/DrugList';
 //import QrReader from 'react-qr-reader'
+var checkmarkImage = require('../img/featherPen.jpg');
 
 import { Router, Route, browserHistory } from 'react-router'
 
@@ -46,6 +47,26 @@ class DoctorContainer extends React.Component {
       width: 320,
     }
 
+    const buttonStyle = {
+      height: "40px",
+      lineHeight: "20px",
+      fontSize: "20px",
+      background: "#FFFFFF",
+      marginRight: "12px",
+      padding: "5px",
+      borderRadius: "6px",
+      border: "2px solid #888",
+      fontFace: "Roboto, sans-serif",
+      color: "#000",
+    }
+
+    let doctorArray = accounts.filter(el => {
+      return el.category == 'doc'
+    })
+
+
+    console.log("DOC ARRAY")
+    console.log(doctorArray)
 
     return (
         <div className="container">
@@ -60,7 +81,7 @@ class DoctorContainer extends React.Component {
                           ref={(c) => {this.doctorInput = c;}}
                           onChange={(...args) => this.selectIdentity(...args)}>
                     <option data-key={null}>Select Doctor</option>
-                    {accounts.map((account) => {
+                    {doctorArray.map((account) => {
                       return (
                           <option data-key={account.address}>{account.name}</option>
                       )
@@ -145,8 +166,11 @@ class DoctorContainer extends React.Component {
                     </div>
                     <button type="submit"
                             onClick={(...args) => this.onClickPrescribe(...args)}
-                            className="btn btn-success">
-                      Prescribe
+                            className="btn btn-success"
+                            style={buttonStyle}
+                    >
+                      Prescribe{' '}
+                      <img src={checkmarkImage} style={{height: "24px"}} />
                     </button>
                   </form>
 

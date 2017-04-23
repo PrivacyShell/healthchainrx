@@ -2,9 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { getAllAccounts } from '../reducers/accounts'
 import AddressDropdown from '../components/AddressDropdown'
-import { verifyPrescriptionDispatcher, setSelectedPharmaAddress} from '../actions'
+import { verifyPrescriptionDispatcher, dispenseDispatcher, setSelectedPharmaAddress} from '../actions'
 import QrReader from 'react-qr-reader'
 import sha256_wrapper from '../crypto';
+var mortarPestleImage = require('../img/MortarPestle.jpg');
+var checkmarkImage = require('../img/checkmark.png');
 
 const $ = window.$;
 
@@ -35,12 +37,28 @@ class PharmaContainer extends React.Component {
 
   render(){
 
-    let { accounts, verifyPrescriptionDispatcher } = this.props;
+    let { accounts, verifyPrescriptionDispatcher, dispenseDispatcher } = this.props;
 
     const previewStyle = {
       height: 240,
       width: 320,
     }
+
+    const buttonStyle = {
+      height: "40px",
+      lineHeight: "20px",
+      fontSize: "20px",
+      background: "#FFFFFF",
+      marginRight: "12px",
+      padding: "5px",
+      borderRadius: "6px",
+      border: "2px solid #888",
+      fontFace: "Roboto, sans-serif"
+    }
+
+    let pharmaArray = accounts.filter(el => {
+      return el.category == 'pharma'
+    })
 
     return (
         <div className="container">
@@ -53,7 +71,7 @@ class PharmaContainer extends React.Component {
                         ref={(c) => {this.pharmaInput = c;}}
                         onChange={(...args) => this.selectIdentity(...args)}>
                   <option data-key={null}>Select Pharmacy</option>
-                  {accounts.map((account) => {
+                  {pharmaArray.map((account) => {
                     return (
                         <option data-key={account.address}>{account.name}</option>
                     )
@@ -126,7 +144,15 @@ class PharmaContainer extends React.Component {
                              id="nonce-input"
                              placeholder="Nonce"/>
                     </div>
-                    <button onClick={(...args) => this.onClickVerify(...args)}>Verify</button>
+                    <button  style={buttonStyle} onClick={(...args) => this.onClickVerify(...args)}>
+                      Verify
+                      <img src={checkmarkImage} style={{height: "16px"}} />
+                    </button>
+
+                    <button style={buttonStyle} onClick={(...args) => this.onClickDispense(...args)}>
+                      Dispense{' '}
+                      <img src={mortarPestleImage} style={{width: "16px"}} />
+                    </button>
 
                 </div>
 
@@ -188,9 +214,28 @@ class PharmaContainer extends React.Component {
   }
 
   onClickVerify(){
-    let hash;
+    let formValues = {
+      name: this.nameInput.value,
+      dob: this.dobInput.value,
+      healthCard: this.healthCardInput.value,
+      prescription: this.prescriptionInput.value,
+      instructions: this.instructionsInput.value,
+    };
+
+    let nonce = this.nonceInput.value;
 
 
+    let encoded = JSON.stringify(formValues);
+    encoded += nonce;
+
+    sha256_wrapper(encoded, (hash) => {
+      console.log('sha256 hash PHARMA: ', hash);
+      let result = this.props.verifyPrescriptionDispatcher(hash);
+      console.log('verifyPrescriptionDispatcher RESULT: ', result);
+    })
+  }
+
+  onClickDispense(){
     let formValues = {
       name: this.nameInput.value,
       dob: this.dobInput.value,
@@ -209,7 +254,7 @@ class PharmaContainer extends React.Component {
 
     sha256_wrapper(encoded, (hash) => {
       console.log('sha256 hash PHARMA: ', hash);
-      let result = this.props.verifyPrescriptionDispatcher(hash);
+      let result = this.props.dispenseDispatcher(hash);
       console.log('verifyPrescriptionDispatcher RESULT: ', result);
     })
   }
@@ -246,5 +291,5 @@ class PharmaContainer extends React.Component {
 
   export default connect(
     mapStateToProps,
-    { verifyPrescriptionDispatcher, setSelectedPharmaAddress }
+    { verifyPrescriptionDispatcher, dispenseDispatcher, setSelectedPharmaAddress }
   )(PharmaContainer)

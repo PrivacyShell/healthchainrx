@@ -7,8 +7,8 @@ import { SELECT_CRYPTO, SELECT_FROM_ADDRESS, SELECT_TO_ADDRESS, ENTER_AMOUNT } f
 import { SHOW_TRANSACTIONS, ADD_TRANSACTION } from '../reducers/transactions'
 import { RECIEVE_IDENTITIES } from '../reducers/identities'
 import { SHOW_PRESCRIPTION_QR } from '../reducers/prescription'
-import { SHOW_SUCCESS, SHOW_ERROR } from '../reducers/dispenser'
-import { addPrescription, verifyPrescription } from '../middleware/HealthChainRx'
+import { SHOW_SUCCESS, SHOW_ERROR, DISPENSE } from '../reducers/dispenser'
+import { addPrescription, verifyPrescription, dispensePrescription } from '../middleware/HealthChainRx'
 
 import Web3 from 'web3'
 
@@ -52,6 +52,7 @@ export const addPrescriptionDispatcher = (dateIssued, expiresInDays, hash, qrCod
   let storeState = getState();
   let docAddress = storeState.accounts.selected.selectedDoctorAddress;
   let success = addPrescription(dateIssued, expiresInDays, hash, docAddress)
+  console.log(`success: ${success}`)
   if (success) {
     dispatch(showPrescriptionQR({dateIssued, expiresInDays, hash, qrCodeData}))
   } else {
@@ -81,12 +82,21 @@ export const verifyPrescriptionDispatcher = (hash) => (dispatch, getState) => {
     }
   })
 
-  //if (status === "Good") {
-  //  dispatch(showSuccess(status))
-  //} else {
-  //  dispatch(showError(status))
-  //}
+}
 
+const dispense = status => ({
+  type: DISPENSE,
+  status
+})
+
+export const dispenseDispatcher = (hash) => (dispatch, getState) => {
+  let storeState = getState();
+  let pharmaAddress = storeState.accounts.selected.selectedPharmaAddress;
+  let status = dispensePrescription(hash, pharmaAddress)
+
+    console.log('STATUS: ', status);
+
+    dispatch(dispense(status))
 }
 
 const receiveAccounts = accounts => ({
@@ -173,10 +183,8 @@ export const fetchTransactions = () => (dispatch, getState) => {
         console.log(error)
       } else{
         console.log(`result1: ${result}`)
-        let txr = web3.eth.getTransaction(result)
+        var block = web3.eth.getBlock(result, true)
         debugger
-        console.log(txr)
-        //var block = web3.eth.getBlock(result, true)
         //
         //console.log('block #' + block.number)
         //console.dir(block.transactions)
@@ -205,7 +213,6 @@ export const watchPrescriptions = () => async (dispatch, getState) => {
       console.log(error)
     } else {
       console.log(result)
-      debugger
       //dispatch(prescriptionAction(result))
     }
   })
