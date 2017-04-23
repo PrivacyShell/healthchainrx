@@ -4,10 +4,10 @@ import crypto from '../middleware/crypto'
 import { RECEIVE_ACCOUNTS, SET_SELECTED_DOCTOR_ADDRESS, SET_SELECTED_PHARMA_ADDRESS } from '../reducers/accounts'
 import { RECEIVE_CRYPTOS } from '../reducers/cryptos'
 import { SELECT_CRYPTO, SELECT_FROM_ADDRESS, SELECT_TO_ADDRESS, ENTER_AMOUNT } from '../reducers/transfer'
-import { SHOW_TRANSACTIONS, ADD_TRANSACTION } from '../reducers/transactions'
+import { SHOW_TRANSACTIONS, ADD_TRANSACTION, UPDATE_TRANSACTIONS } from '../reducers/transactions'
 import { RECIEVE_IDENTITIES } from '../reducers/identities'
 import { SHOW_PRESCRIPTION_QR } from '../reducers/prescription'
-import { SHOW_SUCCESS, SHOW_ERROR, DISPENSE } from '../reducers/dispenser'
+import { SHOW_SUCCESS, SHOW_ERROR } from '../reducers/dispenser'
 import { addPrescription, verifyPrescription, dispensePrescription } from '../middleware/HealthChainRx'
 
 import Web3 from 'web3'
@@ -36,7 +36,6 @@ const recieveIdentities = identities => ({
 })
 
 export const getAllIdentities = () => (dispatch, getState) => {
-  //debugger
   let identities = getIdentities().then(ids => {
     dispatch(recieveIdentities(ids))
   })
@@ -71,8 +70,6 @@ const showError = status => ({
 })
 
 export const verifyPrescriptionDispatcher = (hash) => (dispatch, getState) => {
-//  debugger
-//  let status = verifyPrescription(hash)
   verifyPrescription(hash).then((status) => {
     console.log('STATUS: ', status);
     if (status === "Good") {
@@ -84,19 +81,11 @@ export const verifyPrescriptionDispatcher = (hash) => (dispatch, getState) => {
 
 }
 
-const dispense = status => ({
-  type: DISPENSE,
-  status
-})
-
-export const dispenseDispatcher = (hash) => (dispatch, getState) => {
+export const dispenseDispatcher = (hash) => async (dispatch, getState) => {
   let storeState = getState();
   let pharmaAddress = storeState.accounts.selected.selectedPharmaAddress;
-  let status = dispensePrescription(hash, pharmaAddress)
-
-    console.log('STATUS: ', status);
-
-    dispatch(dispense(status))
+  let txn = await dispensePrescription(hash, pharmaAddress)
+  dispatch(addTransactionAction(txn))
 }
 
 const receiveAccounts = accounts => ({
@@ -117,6 +106,11 @@ const setToAddress = address => ({
 export const addTransactionAction = transaction => ({
   type: ADD_TRANSACTION,
   transaction
+})
+
+export const updateAllTransactions = data => ({
+  type: UPDATE_TRANSACTIONS,
+  data
 })
 
 export const showTransactions = transactions => ({
@@ -176,29 +170,31 @@ export const emitTransfer = () => (dispatch, getState) => {
   console.log(`txnHash: ${txnHash}`)
 }
 
-export const fetchTransactions = () => (dispatch, getState) => {
+export const watchTransactions = () => (dispatch, getState) => {
   let filter = web3.eth.filter('latest');
   return filter.watch(function(error, result) {
       if (error) {
         console.log(error)
       } else{
-        console.log(`result1: ${result}`)
         var block = web3.eth.getBlock(result, true)
-        debugger
-        //
-        //console.log('block #' + block.number)
-        //console.dir(block.transactions)
-        ////console.log(web3.version)
-        ////debugger
-        //
-        //// we know there is only 1 txn per block in test...accessing only the first transactions
-        //// in a block won't work beyond localhost
-        //let txn = block.transactions[0]
-        //txn.receipt = web3.eth.getTransactionReceipt(block.transactions[0].hash)
-        //dispatch(addTransactionAction(txn))
-        //dispatch(showTransactions(getState().transactions))
-        //dispatch(getAllAccounts())
-        ////debugger
+        let txns = getState().transactions
+        for (var txn of block.transactions) {
+          console.log('txn: ', txn);
+          let receipt = web3.eth.getTransactionReceipt(txn.hash)
+          console.log('receipt:', receipt)
+          let idx = txns.findIndex((txn) => (txn && txn.hash && txn.hash == receipt.transactionHash));
+          if(idx >= 0){
+            // found
+            let elem = txns[idx];
+
+            elem.receipt  = receipt;
+            txns[idx] = elem;
+          }
+          //debugger
+          // let receipt = web3.eth.getTransactionReceipt(txn.hash)
+          // dispatch(transactionMined(receipt))
+        }
+        dispatch(updateAllTransactions(txns))
       }
     }
   )
