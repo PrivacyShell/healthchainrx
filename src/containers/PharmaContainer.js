@@ -5,6 +5,8 @@ import AddressDropdown from '../components/AddressDropdown'
 import { verifyPrescriptionDispatcher, dispenseDispatcher, setSelectedPharmaAddress} from '../actions'
 import QrReader from 'react-qr-reader'
 import sha256_wrapper from '../crypto';
+var mortarPestleImage = require('../img/MortarPestle.jpg');
+var checkmarkImage = require('../img/checkmark.png');
 
 /* Fields
 - Name - text
@@ -40,6 +42,22 @@ class PharmaContainer extends React.Component {
       width: 320,
     }
 
+    const buttonStyle = {
+      height: "40px",
+      lineHeight: "20px",
+      fontSize: "20px",
+      background: "#FFFFFF",
+      marginRight: "12px",
+      padding: "5px",
+      borderRadius: "6px",
+      border: "2px solid #888",
+      fontFace: "Roboto, sans-serif"
+    }
+
+    let pharmaArray = accounts.filter(el => {
+      return el.category == 'pharma'
+    })
+
     return (
         <div className="container">
           <div className="row">
@@ -51,7 +69,7 @@ class PharmaContainer extends React.Component {
                         ref={(c) => {this.pharmaInput = c;}}
                         onChange={(...args) => this.selectIdentity(...args)}>
                   <option data-key={null}>Select Pharmacy</option>
-                  {accounts.map((account) => {
+                  {pharmaArray.map((account) => {
                     return (
                         <option data-key={account.address}>{account.name}</option>
                     )
@@ -124,8 +142,15 @@ class PharmaContainer extends React.Component {
                              id="nonce-input"
                              placeholder="Nonce"/>
                     </div>
-                    <button onClick={(...args) => this.onClickVerify(...args)}>Verify</button>
-                    <button onClick={(...args) => this.onClickDispense(...args)}>Dispense</button>
+                    <button  style={buttonStyle} onClick={(...args) => this.onClickVerify(...args)}>
+                      Verify
+                      <img src={checkmarkImage} style={{height: "16px"}} />
+                    </button>
+
+                    <button style={buttonStyle} onClick={(...args) => this.onClickDispense(...args)}>
+                      Dispense{' '}
+                      <img src={mortarPestleImage} style={{width: "16px"}} />
+                    </button>
 
                 </div>
 
